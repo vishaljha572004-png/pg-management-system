@@ -79,7 +79,7 @@ const Login = () => {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left side - Branding/Illustration */}
-      <div className="hidden lg:flex w-1/2 bg-zinc-900 relative flex-col justify-between p-12 text-white overflow-hidden">
+      <div className="hidden md:flex w-1/2 bg-zinc-900 relative flex-col justify-between p-12 text-white overflow-hidden">
         {/* Abstract Background pattern */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -127,14 +127,14 @@ const Login = () => {
       </div>
 
       {/* Right side - Login Form */}
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-8 sm:p-12">
+      <div className="flex w-full md:w-1/2 items-center justify-center p-8 sm:p-12">
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
           className="w-full max-w-[400px] space-y-8"
         >
-          <div className="space-y-2 text-center lg:text-left">
+          <div className="space-y-2 text-center md:text-left">
             <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
             <p className="text-muted-foreground">Enter your credentials to access your account</p>
           </div>
