@@ -45,10 +45,17 @@ async function init() {
                     console.log("Skipped a query due to error (likely a comment): ", err.message);
                 }
             }
+            
             console.log("Schema dump imported successfully!");
         } else {
             console.log("Database already initialized. Skipping auto-init.");
         }
+        
+        // Seed the roles table unconditionally (uses IGNORE to prevent duplicates)
+        // This ensures roles exist even if tables were created but seeding was skipped previously.
+        console.log("Ensuring default roles exist...");
+        await connection.query("INSERT IGNORE INTO roles (name) VALUES ('Super Admin'), ('Admin'), ('Student')");
+        
         await connection.end();
         process.exit(0);
     } catch (e) {
