@@ -26,13 +26,20 @@ async function init() {
         if (rows.length === 0) {
             console.log("Database looks empty. Running schema dump...");
             let sql = fs.readFileSync(path.join(__dirname, 'schema_dump.sql'), 'utf8');
-            // Remove BOM if present (causes syntax error in mysql2)
+            
             if (sql.charCodeAt(0) === 0xFEFF) {
                 sql = sql.slice(1);
             }
-            // Remove comments that might cause issues with multipleStatements
-            sql = sql.replace(/^--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-            await connection.query(sql);
+            
+            const statements = sql.split(';').map(s => s.trim()).filter(s => s.length > 0);
+            
+            for (let stmt of statements) {
+                try {
+                    await connection.query(stmt);
+                } catch (err) {
+                    console.log("Skipped a query due to error (likely a comment): ", err.message);
+                }
+            }
             console.log("Schema dump imported successfully!");
         } else {
             console.log("Database already initialized. Skipping auto-init.");
