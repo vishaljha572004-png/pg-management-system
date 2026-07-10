@@ -93,6 +93,7 @@ desktop.ini
 backend/uploads/
 uploads/
 *.sql
+!backend/schema_dump.sql
 *.sqlite
 *.sqlite3
 schema_dump*.sql
