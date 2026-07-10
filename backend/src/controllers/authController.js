@@ -73,7 +73,7 @@ export const registerPG = async (req, res) => {
     });
   } catch (error) {
     console.error('PG Registration Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', details: error.message, stack: error.stack });
   }
 };
 
