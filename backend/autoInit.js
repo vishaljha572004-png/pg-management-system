@@ -31,6 +31,11 @@ async function init() {
                 sql = sql.slice(1);
             }
             
+            // Aggressively remove all MySQL comments and executable comments to prevent parser crashes
+            sql = sql.replace(/--.*$/gm, ''); // Remove line comments
+            sql = sql.replace(/\/\*![\s\S]*?\*\//g, ''); // Remove executable comments
+            sql = sql.replace(/\/\*[\s\S]*?\*\//g, ''); // Remove block comments
+            
             const statements = sql.split(';').map(s => s.trim()).filter(s => s.length > 0);
             
             for (let stmt of statements) {
