@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Important: configure CORS to allow credentials for cookies
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'https://pg-management-system-84bq.vercel.app', process.env.FRONTEND_URL],
   credentials: true
 }));
 app.use(helmet({ crossOriginResourcePolicy: false })); // Allow cross origin resource sharing for images
