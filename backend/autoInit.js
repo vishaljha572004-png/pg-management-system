@@ -32,8 +32,10 @@ async function init() {
             console.log("Database already initialized. Skipping auto-init.");
         }
         await connection.end();
+        process.exit(0);
     } catch (e) {
         console.error("AutoInit error:", e.message);
+        process.exit(1);
     }
 }
 
