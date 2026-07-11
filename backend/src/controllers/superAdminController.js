@@ -36,10 +36,75 @@ export const createPG = async (req, res) => {
 
 export const getPGs = async (req, res) => {
   try {
-    const [pgs] = await pool.execute('SELECT * FROM pgs');
+    const [pgs] = await pool.execute(`
+      SELECT 
+        p.id, p.name, p.org_code, p.owner_name, p.contact_number, p.email, p.status, p.created_at,
+        (SELECT COUNT(*) FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Student') as total_students,
+        (SELECT name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Admin' LIMIT 1) as admin_name,
+        (SELECT email FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Admin' LIMIT 1) as admin_email,
+        (SELECT phone FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Admin' LIMIT 1) as admin_phone,
+        (SELECT COUNT(*) FROM rooms r WHERE r.pg_id = p.id) as total_rooms,
+        (SELECT COUNT(*) FROM beds b WHERE b.pg_id = p.id AND b.status = 'occupied') as occupied_rooms,
+        (SELECT COUNT(*) FROM beds b WHERE b.pg_id = p.id AND b.status = 'available') as available_rooms
+      FROM pgs p
+      ORDER BY p.created_at DESC
+    `);
     res.json(pgs);
   } catch (error) {
     console.error('Get PGs Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const getHostelDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Get basic PG details and stats
+    const [pgRows] = await pool.execute(`
+      SELECT 
+        p.*,
+        (SELECT COUNT(*) FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Student') as total_students,
+        (SELECT COUNT(*) FROM rooms r WHERE r.pg_id = p.id) as total_rooms,
+        (SELECT COUNT(*) FROM beds b WHERE b.pg_id = p.id AND b.status = 'occupied') as occupied_rooms,
+        (SELECT COUNT(*) FROM beds b WHERE b.pg_id = p.id AND b.status = 'available') as available_rooms,
+        (SELECT IFNULL(SUM(amount), 0) FROM rent_payments rp WHERE rp.pg_id = p.id AND rp.status = 'paid') as total_revenue,
+        (SELECT COUNT(*) FROM complaints c WHERE c.pg_id = p.id AND c.status = 'open') as open_complaints
+      FROM pgs p WHERE p.id = ?
+    `, [id]);
+
+    if (pgRows.length === 0) {
+      return res.status(404).json({ message: 'Hostel not found' });
+    }
+
+    const pg = pgRows[0];
+
+    // Get Admins for this PG
+    const [admins] = await pool.execute(`
+      SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at 
+      FROM users u JOIN roles r ON u.role_id = r.id 
+      WHERE u.pg_id = ? AND r.name = 'Admin'
+    `, [id]);
+
+    // Get Students for this PG
+    const [students] = await pool.execute(`
+      SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at, b.bed_number, r.room_number 
+      FROM users u 
+      JOIN roles ro ON u.role_id = ro.id 
+      LEFT JOIN beds b ON u.id = b.student_id 
+      LEFT JOIN rooms r ON b.room_id = r.id 
+      WHERE u.pg_id = ? AND ro.name = 'Student'
+      ORDER BY u.created_at DESC
+      LIMIT 50
+    `, [id]); // Limiting to 50 for quick summary view
+
+    res.json({
+      hostel: pg,
+      admins,
+      students
+    });
+  } catch (error) {
+    console.error('Get Hostel Details Error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
