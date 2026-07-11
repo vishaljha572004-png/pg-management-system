@@ -186,8 +186,22 @@ const AdminDashboard = () => {
             <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-3 ml-4">
               <button 
                 onClick={() => {
-                  navigator.clipboard.writeText(stats.orgCode);
-                  toast.success('Code copied to clipboard!');
+                  const code = stats.orgCode || '';
+                  if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(code).then(() => toast.success('Code copied to clipboard!'));
+                  } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                      document.execCommand('copy');
+                      toast.success('Code copied to clipboard!');
+                    } catch (err) {
+                      toast.error('Failed to copy');
+                    }
+                    document.body.removeChild(textArea);
+                  }
                 }}
                 className="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
                 title="Copy Code"
@@ -196,12 +210,23 @@ const AdminDashboard = () => {
               </button>
               <button 
                 onClick={() => {
-                  const text = `Join our PG on the PG Management App!\n\nOrganization Code: ${stats.orgCode}`;
-                  if (navigator.share) {
+                  const text = `Join our PG on the PG Management App!\n\nOrganization Code: ${stats.orgCode || ''}`;
+                  if (navigator.share && window.isSecureContext) {
                     navigator.share({ title: 'Join our PG', text }).catch(console.error);
                   } else {
-                    navigator.clipboard.writeText(text);
-                    toast.success('Share text copied to clipboard!');
+                    if (navigator.clipboard && window.isSecureContext) {
+                      navigator.clipboard.writeText(text).then(() => toast.success('Share text copied!'));
+                    } else {
+                      const textArea = document.createElement("textarea");
+                      textArea.value = text;
+                      document.body.appendChild(textArea);
+                      textArea.select();
+                      try {
+                        document.execCommand('copy');
+                        toast.success('Share text copied!');
+                      } catch (err) {}
+                      document.body.removeChild(textArea);
+                    }
                   }
                 }}
                 className="p-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-md transition-colors"

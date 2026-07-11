@@ -51,12 +51,11 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
       </AnimatePresence>
 
       {/* Sidebar Container */}
-      <motion.aside
-        initial={false}
-        animate={{ width: collapsed ? 80 : 260 }} // Fixed: Removed x: 0 which was overriding Tailwind's transform classes
+      <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-background transition-all duration-300 lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
+          collapsed ? "w-[80px]" : "w-[260px]"
         )}
       >
         <div className="flex h-16 items-center justify-between px-4 border-b">
@@ -141,7 +140,7 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
             {!collapsed && <span>Logout</span>}
           </button>
         </div>
-      </motion.aside>
+      </aside>
     </>
   );
 }

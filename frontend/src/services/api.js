@@ -38,7 +38,8 @@ api.interceptors.response.use(
         localStorage.setItem('accessToken', data.accessToken);
         api.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
         
-        // Retry original request
+        // Retry original request with new token
+        originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
         // If refresh fails, user must log in again
