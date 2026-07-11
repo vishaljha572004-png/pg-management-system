@@ -14,6 +14,7 @@ import {
   Share2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Skeleton } from '../components/ui/Skeleton';
 import { Button } from '../components/ui/Button';
