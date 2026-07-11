@@ -138,6 +138,9 @@ const handleLogin = async (req, res, allowedRoles) => {
     }
 
     // Verify password
+    if (!user.password_hash) {
+      return res.status(400).json({ message: 'Invalid credentials. Please reset your password or contact admin.' });
+    }
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });

@@ -18,6 +18,16 @@ const pool = mysql.createPool({
 pool.getConnection()
   .then(connection => {
     console.log('✅ Successfully connected to the MySQL database.');
+    
+    // Auto-patch missing columns to prevent 500 errors in production
+    connection.query('ALTER TABLE users ADD COLUMN refresh_token TEXT NULL')
+      .then(() => console.log('✅ Auto-patched: Added refresh_token to users table.'))
+      .catch(e => {
+        if (e.code !== 'ER_DUP_FIELDNAME') {
+          console.error('Auto-patch error (refresh_token):', e.message);
+        }
+      });
+      
     connection.release();
   })
   .catch(error => {
