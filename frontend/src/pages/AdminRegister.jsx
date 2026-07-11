@@ -9,6 +9,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { PasswordInput } from '../components/ui/PasswordInput';
 
 const registerSchema = z.object({
   pg_name: z.string().min(2, 'PG Name must be at least 2 characters'),
@@ -147,9 +148,9 @@ const AdminRegister = () => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none">Password</label>
-              <Input
-                type="password"
+              <PasswordInput
                 {...register('password')}
+                autoComplete="new-password"
                 placeholder="••••••••"
               />
               {errors.password && <p className="text-destructive text-sm mt-1">{errors.password.message}</p>}

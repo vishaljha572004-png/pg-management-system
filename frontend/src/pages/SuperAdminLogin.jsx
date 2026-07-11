@@ -9,6 +9,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { PasswordInput } from '../components/ui/PasswordInput';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -133,8 +134,7 @@ const SuperAdminLogin = () => {
                   <label className="text-sm font-medium leading-none">Password</label>
                   <a href="#" className="text-sm font-medium text-primary hover:underline">Forgot password?</a>
                 </div>
-                <Input
-                  type="password"
+                <PasswordInput
                   id="password"
                   {...register('password')}
                   autoComplete="current-password"

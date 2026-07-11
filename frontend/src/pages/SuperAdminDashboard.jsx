@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { PasswordInput } from '../components/ui/PasswordInput';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 
@@ -319,7 +320,7 @@ const SuperAdminDashboard = () => {
                   <Input placeholder="Full Name" value={adminFormData.name} onChange={e => setAdminFormData({...adminFormData, name: e.target.value})} required />
                   <Input type="email" placeholder="Email Address" value={adminFormData.email} onChange={e => setAdminFormData({...adminFormData, email: e.target.value})} required />
                   <Input type="tel" placeholder="Phone Number" value={adminFormData.phone} onChange={e => setAdminFormData({...adminFormData, phone: e.target.value})} required />
-                  <Input type="password" placeholder="Password" value={adminFormData.password} onChange={e => setAdminFormData({...adminFormData, password: e.target.value})} required />
+                  <PasswordInput autoComplete="new-password" placeholder="Password" value={adminFormData.password} onChange={e => setAdminFormData({...adminFormData, password: e.target.value})} required />
                   <Button type="submit" disabled={isLoading}>{isLoading ? 'Creating...' : 'Create Admin'}</Button>
                 </form>
               </CardContent>

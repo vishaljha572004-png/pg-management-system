@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { PasswordInput } from '../components/ui/PasswordInput';
 
 const StudentProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -113,9 +114,9 @@ const StudentProfile = () => {
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1 flex items-center gap-2"><Lock size={16}/> New Password (Optional)</label>
-                    <Input 
-                      type="password"
+                    <PasswordInput 
                       {...register('password')} 
+                      autoComplete="new-password"
                       placeholder="Leave blank to keep current password"
                       className="mt-1"
                     />
