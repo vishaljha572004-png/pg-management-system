@@ -174,8 +174,8 @@ const handleLogin = async (req, res, allowedRoles) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // OTP Verification Check
-    if (!user.is_phone_verified) {
+    // OTP Verification Check (Bypass for Super Admin)
+    if (!user.is_phone_verified && user.role !== 'Super Admin') {
       if (!otpToken) {
         // Stop login, require OTP flow
         return res.status(403).json({ 
