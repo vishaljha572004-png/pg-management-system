@@ -118,7 +118,7 @@ const handleLogin = async (req, res, allowedRoles) => {
       if (!org_code) {
         return res.status(400).json({ message: 'Organization Code is required for student login' });
       }
-      const [pgRows] = await pool.execute('SELECT id FROM pgs WHERE org_code = ? AND status = "active"', [org_code]);
+      const [pgRows] = await pool.execute("SELECT id FROM pgs WHERE org_code = ? AND status = 'active'", [org_code]);
       if (pgRows.length === 0) {
         return res.status(400).json({ message: 'Invalid Organization Code' });
       }
