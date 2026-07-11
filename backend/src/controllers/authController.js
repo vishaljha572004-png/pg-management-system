@@ -7,7 +7,20 @@ import { generateOrgCode } from '../utils/generateOrgCode.js';
 
 export const registerPG = async (req, res) => {
   try {
-    const { pg_name, owner_name, email, phone, password } = req.body;
+    const { pg_name, owner_name, email, phone, password, otpToken } = req.body;
+
+    if (!otpToken) {
+      return res.status(400).json({ message: 'OTP verification is required for registration.' });
+    }
+
+    try {
+      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'super_secret_access_key_2026');
+      if (decoded.phone !== phone || decoded.purpose !== 'admin_signup' || !decoded.verified) {
+        return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
+      }
+    } catch (err) {
+      return res.status(400).json({ message: 'OTP token is expired or invalid. Please verify mobile again.' });
+    }
 
     // Check if user exists
     const existingUser = await UserModel.findByEmail(email);
@@ -47,7 +60,8 @@ export const registerPG = async (req, res) => {
       phone,
       password_hash,
       role_name: 'Admin',
-      pg_id
+      pg_id,
+      is_phone_verified: true
     });
 
     // Generate tokens for auto-login
@@ -79,7 +93,20 @@ export const registerPG = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const { name, email, phone, password, otpToken } = req.body;
+
+    if (!otpToken) {
+      return res.status(400).json({ message: 'OTP verification is required for registration.' });
+    }
+
+    try {
+      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'super_secret_access_key_2026');
+      if (decoded.phone !== phone || decoded.purpose !== 'student_signup' || !decoded.verified) {
+        return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
+      }
+    } catch (err) {
+      return res.status(400).json({ message: 'OTP token is expired or invalid. Please verify mobile again.' });
+    }
 
     // Check if user exists
     const existingUser = await UserModel.findByEmail(email);
@@ -98,7 +125,8 @@ export const register = async (req, res) => {
       email,
       phone,
       password_hash,
-      role_name: 'Student'
+      role_name: 'Student',
+      is_phone_verified: true
     });
 
     res.status(201).json({ message: 'Student registered successfully', userId });
@@ -110,7 +138,7 @@ export const register = async (req, res) => {
 
 const handleLogin = async (req, res, allowedRoles) => {
   try {
-    const { email, password, org_code } = req.body;
+    const { email, password, org_code, otpToken } = req.body;
     let pg_id = undefined;
 
     if (!email || !password) {
@@ -148,6 +176,33 @@ const handleLogin = async (req, res, allowedRoles) => {
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // OTP Verification Check
+    if (!user.is_phone_verified) {
+      if (!otpToken) {
+        // Stop login, require OTP flow
+        return res.status(403).json({ 
+          requires_otp: true, 
+          phone: user.phone, 
+          purpose: 'login',
+          message: 'Mobile number verification required.' 
+        });
+      }
+
+      // Verify the OTP token provided by frontend after OTP flow
+      try {
+        const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'super_secret_access_key_2026');
+        if (decoded.phone !== user.phone || decoded.purpose !== 'login' || !decoded.verified) {
+          return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
+        }
+        
+        // Mark as verified in DB
+        await UserModel.markPhoneVerified(user.id);
+        user.is_phone_verified = true;
+      } catch (err) {
+        return res.status(400).json({ message: 'OTP token is expired or invalid.' });
+      }
     }
 
     // Role Verification

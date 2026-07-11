@@ -1,6 +1,8 @@
 import express from 'express';
 import { register, login, adminLogin, superAdminLogin, refresh, logout, getProfile, updateProfile, findPG, registerPG } from '../controllers/authController.js';
 import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
+import { sendOtp, verifyOtp } from '../controllers/otpController.js';
+import rateLimit from 'express-rate-limit';
 
 import { body, validationResult } from 'express-validator';
 
@@ -13,6 +15,14 @@ const validateRequest = (req, res, next) => {
 };
 
 const router = express.Router();
+
+const otpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 OTP requests per `window` (here, per 15 minutes)
+  message: { message: 'Too many OTP requests from this IP, please try again after 15 minutes' },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 // Public Routes
 router.post('/register', [
@@ -54,6 +64,20 @@ router.post('/find-pg', [
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   validateRequest
 ], findPG);
+
+// OTP Routes
+router.post('/otp/send', otpLimiter, [
+  body('phone').trim().notEmpty().withMessage('Phone is required'),
+  body('purpose').trim().notEmpty().withMessage('Purpose is required'),
+  validateRequest
+], sendOtp);
+
+router.post('/otp/verify', [
+  body('phone').trim().notEmpty().withMessage('Phone is required'),
+  body('otp').trim().isLength({ min: 6, max: 6 }).withMessage('Valid 6-digit OTP is required'),
+  body('purpose').trim().notEmpty().withMessage('Purpose is required'),
+  validateRequest
+], verifyOtp);
 
 router.post('/refresh', refresh);
 router.post('/logout', logout);

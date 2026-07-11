@@ -24,15 +24,15 @@ export const UserModel = {
   },
 
   async findById(id) {
-    const [rows] = await pool.execute('SELECT u.id, u.name, u.email, u.phone, r.name as role, u.profile_photo, u.status, u.pg_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?', [id]);
+    const [rows] = await pool.execute('SELECT u.id, u.name, u.email, u.phone, u.is_phone_verified, r.name as role, u.profile_photo, u.status, u.pg_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?', [id]);
     return rows[0];
   },
 
   async create(user) {
-    const { name, email, phone, password_hash, role_name = 'Student', pg_id = null } = user;
+    const { name, email, phone, password_hash, role_name = 'Student', pg_id = null, is_phone_verified = false } = user;
     const [result] = await pool.execute(
-      `INSERT INTO users (name, email, phone, password_hash, role_id, pg_id) VALUES (?, ?, ?, ?, (SELECT id FROM roles WHERE name = ?), ?)`,
-      [name, email, phone, password_hash, role_name, pg_id]
+      `INSERT INTO users (name, email, phone, password_hash, role_id, pg_id, is_phone_verified) VALUES (?, ?, ?, ?, (SELECT id FROM roles WHERE name = ?), ?, ?)`,
+      [name, email, phone, password_hash, role_name, pg_id, is_phone_verified]
     );
     return result.insertId;
   },
@@ -43,5 +43,9 @@ export const UserModel = {
 
   async clearRefreshToken(id) {
     await pool.execute('UPDATE users SET refresh_token = NULL WHERE id = ?', [id]);
+  },
+
+  async markPhoneVerified(id) {
+    await pool.execute('UPDATE users SET is_phone_verified = TRUE WHERE id = ?', [id]);
   }
 };

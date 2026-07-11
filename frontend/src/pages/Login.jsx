@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { PasswordInput } from '../components/ui/PasswordInput';
-
+import { OTPModal } from '../components/ui/OTPModal';
 import { X } from 'lucide-react';
 
 const loginSchema = z.object({
@@ -41,6 +41,8 @@ const Login = () => {
   const [findPgOtp, setFindPgOtp] = useState('');
   const [foundPg, setFoundPg] = useState(null);
   const [isFindingPg, setIsFindingPg] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [pendingData, setPendingData] = useState(null);
 
   const { login } = useContext(AuthContext);
 
@@ -72,8 +74,36 @@ const Login = () => {
       window.location.href = '/dashboard';
     } catch (error) {
       const errData = error.response?.data;
-      const errMsg = errData?.details ? `${errData.message}: ${errData.details}` : (errData?.message || 'Login failed');
-      toast.error(errMsg);
+      if (errData?.requires_otp) {
+        setPendingData({ ...data, phone: errData.phone });
+        try {
+          await api.post('/auth/otp/send', { phone: errData.phone, purpose: 'login' });
+          setShowOTPModal(true);
+        } catch (otpErr) {
+          toast.error(otpErr.response?.data?.message || 'Failed to send OTP');
+        }
+      } else {
+        const errMsg = errData?.details ? `${errData.message}: ${errData.details}` : (errData?.message || 'Login failed');
+        toast.error(errMsg);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onOTPVerified = async (otpToken) => {
+    setShowOTPModal(false);
+    setIsLoading(true);
+    try {
+      const response = await api.post('/auth/login', { ...pendingData, otpToken });
+      toast.success(response.data.message);
+      login(response.data.user, response.data.accessToken);
+      if (rememberMe) {
+        localStorage.setItem('studentLoginDetails', JSON.stringify(pendingData));
+      }
+      window.location.href = '/dashboard';
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Login failed after OTP');
     } finally {
       setIsLoading(false);
     }
@@ -248,6 +278,16 @@ const Login = () => {
             )}
           </motion.div>
         </div>
+      )}
+
+      {showOTPModal && pendingData && (
+        <OTPModal
+          isOpen={showOTPModal}
+          onClose={() => setShowOTPModal(false)}
+          phone={pendingData.phone}
+          purpose="login"
+          onSuccess={onOTPVerified}
+        />
       )}
     </div>
   );

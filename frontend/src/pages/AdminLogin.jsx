@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { PasswordInput } from '../components/ui/PasswordInput';
+import { OTPModal } from '../components/ui/OTPModal';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -32,6 +33,9 @@ const AdminLogin = () => {
   }, [setValue]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [pendingData, setPendingData] = useState(null);
+  
   const { login } = useContext(AuthContext);
 
   const onSubmit = async (data) => {
@@ -47,7 +51,36 @@ const AdminLogin = () => {
       }
       window.location.href = '/admin-dashboard';
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      const errData = error.response?.data;
+      if (errData?.requires_otp) {
+        setPendingData({ ...data, phone: errData.phone });
+        try {
+          await api.post('/auth/otp/send', { phone: errData.phone, purpose: 'login' });
+          setShowOTPModal(true);
+        } catch (otpErr) {
+          toast.error(otpErr.response?.data?.message || 'Failed to send OTP');
+        }
+      } else {
+        toast.error(errData?.message || 'Login failed');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onOTPVerified = async (otpToken) => {
+    setShowOTPModal(false);
+    setIsLoading(true);
+    try {
+      const response = await api.post('/auth/admin/login', { ...pendingData, otpToken });
+      toast.success(response.data.message);
+      login(response.data.user, response.data.accessToken);
+      if (rememberMe) {
+        localStorage.setItem('adminLoginDetails', JSON.stringify(pendingData));
+      }
+      window.location.href = '/admin-dashboard';
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Login failed after OTP');
     } finally {
       setIsLoading(false);
     }
@@ -177,6 +210,16 @@ const AdminLogin = () => {
           </form>
         </motion.div>
       </div>
+
+      {showOTPModal && pendingData && (
+        <OTPModal
+          isOpen={showOTPModal}
+          onClose={() => setShowOTPModal(false)}
+          phone={pendingData.phone}
+          purpose="login"
+          onSuccess={onOTPVerified}
+        />
+      )}
     </div>
   );
 };
