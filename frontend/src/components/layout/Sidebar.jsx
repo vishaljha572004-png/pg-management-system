@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/tw-merge';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,13 +13,25 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
   const [collapsed, setCollapsed] = useState(false);
   const [pgName, setPgName] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       api.get('/settings').then(res => {
         if (res.data?.pg_name) setPgName(res.data.pg_name);
       }).catch(err => console.error(err));
     }
   }, [user]);
+
+  // Prevent background scrolling on mobile when sidebar is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileOpen]);
 
   const toggleCollapse = () => setCollapsed(!collapsed);
 
@@ -41,7 +53,7 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
       {/* Sidebar Container */}
       <motion.aside
         initial={false}
-        animate={{ width: collapsed ? 80 : 260, x: mobileOpen ? 0 : 0 }}
+        animate={{ width: collapsed ? 80 : 260 }} // Fixed: Removed x: 0 which was overriding Tailwind's transform classes
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-background transition-all duration-300 lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
@@ -81,6 +93,7 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
                 <NavLink
                   key={index}
                   to={item.path}
+                  onClick={() => setMobileOpen(false)} // Fixed: Close sidebar on mobile navigation
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors relative group",
                     isActive 
@@ -114,7 +127,10 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
 
         <div className="border-t p-4">
           <button
-            onClick={logout}
+            onClick={() => {
+              setMobileOpen(false);
+              logout();
+            }}
             className={cn(
               "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors",
               collapsed ? "justify-center" : ""
