@@ -44,7 +44,6 @@ router.post('/register-pg', [
 router.post('/login', [
   body('email').trim().notEmpty().withMessage('Email or Phone is required'),
   body('password').notEmpty().withMessage('Password is required'),
-  body('org_code').trim().notEmpty().withMessage('Org Code is required'),
   validateRequest
 ], login);
 

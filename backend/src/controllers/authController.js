@@ -148,31 +148,17 @@ export const register = async (req, res) => {
 
 const handleLogin = async (req, res, allowedRoles) => {
   try {
-    const { email, password, org_code, otpToken } = req.body;
-    let pg_id = undefined;
+    const { email, password, otpToken } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    // For students, resolve org_code to pg_id
-    if (allowedRoles.includes('Student')) {
-      if (!org_code) {
-        return res.status(400).json({ message: 'Organization Code is required for student login' });
-      }
-      const [pgRows] = await pool.execute("SELECT id FROM pgs WHERE org_code = ? AND status = 'active'", [org_code]);
-      if (pgRows.length === 0) {
-        return res.status(400).json({ message: 'Invalid Organization Code' });
-      }
-      pg_id = pgRows[0].id;
-    }
-
-    // Find user by email. Note: 'email' field actually receives either email or phone from frontend usually.
-    // Wait, the frontend sends 'email' field but it can contain a phone number?
-    // Let's assume the frontend sends 'email' and we search by email first, then phone.
-    let user = await UserModel.findByEmail(email, pg_id);
+    // Find user globally by email or phone (uniqueness is enforced on signup)
+    // Note: 'email' field actually receives either email or phone from frontend usually.
+    let user = await UserModel.findByEmail(email);
     if (!user) {
-        user = await UserModel.findByPhone(email, pg_id);
+        user = await UserModel.findByPhone(email);
     }
     
     if (!user) {
