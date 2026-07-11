@@ -3,16 +3,35 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'pg_management',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+let poolConfig = {};
+
+if (process.env.DATABASE_URL || process.env.DB_URI) {
+  // Support standard connection strings from Render/Aiven/PlanetScale
+  poolConfig = {
+    uri: process.env.DATABASE_URL || process.env.DB_URI,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  };
+} else {
+  poolConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'pg_management',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  };
+}
+
+// Cloud MySQL databases strictly require SSL in production
+if (process.env.NODE_ENV === 'production') {
+  poolConfig.ssl = { rejectUnauthorized: false };
+}
+
+const pool = mysql.createPool(poolConfig);
 
 // Test the connection
 pool.getConnection()

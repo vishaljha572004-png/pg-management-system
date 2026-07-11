@@ -70,7 +70,9 @@ const Login = () => {
       }
       window.location.href = '/dashboard';
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      const errData = error.response?.data;
+      const errMsg = errData?.details ? `${errData.message}: ${errData.details}` : (errData?.message || 'Login failed');
+      toast.error(errMsg);
     } finally {
       setIsLoading(false);
     }
