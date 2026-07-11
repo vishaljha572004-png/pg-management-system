@@ -230,17 +230,17 @@ const Login = () => {
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
             
-            <div className="text-center text-sm text-muted-foreground mt-4 space-y-2">
-              <div>
-                <span className="opacity-70">New student? </span>
+            <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-border/50">
+              <div className="text-center text-sm">
+                <span className="text-muted-foreground">Don't have an account yet? </span>
                 <Link to="/register" className="font-semibold text-primary hover:underline">
-                  Create an account
+                  Register as Student
                 </Link>
               </div>
-              <div>
-                <span className="opacity-70">Admins? </span>
+              <div className="text-center text-sm">
+                <span className="text-muted-foreground">Are you a PG Owner/Admin? </span>
                 <Link to="/admin/login" className="font-semibold text-primary hover:underline">
-                  Admin Portal
+                  Go to Admin Portal
                 </Link>
               </div>
             </div>
