@@ -24,7 +24,7 @@ export const UserModel = {
   },
 
   async findById(id) {
-    const [rows] = await pool.execute('SELECT u.id, u.name, u.email, u.phone, r.name as role, u.profile_photo, u.status FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?', [id]);
+    const [rows] = await pool.execute('SELECT u.id, u.name, u.email, u.phone, r.name as role, u.profile_photo, u.status, u.pg_id FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?', [id]);
     return rows[0];
   },
 
