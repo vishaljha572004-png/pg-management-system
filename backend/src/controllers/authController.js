@@ -93,7 +93,7 @@ export const registerPG = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, phone, password, otpToken } = req.body;
+    const { name, email, phone, password, org_code, otpToken } = req.body;
 
     if (!otpToken) {
       return res.status(400).json({ message: 'OTP verification is required for registration.' });
@@ -115,6 +115,15 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'User with this email or phone already exists' });
     }
 
+    let pg_id = null;
+    if (org_code) {
+      const [pgRows] = await pool.execute("SELECT id FROM pgs WHERE org_code = ? AND status = 'active'", [org_code]);
+      if (pgRows.length === 0) {
+        return res.status(400).json({ message: 'Invalid Organization Code' });
+      }
+      pg_id = pgRows[0].id;
+    }
+
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
@@ -126,6 +135,7 @@ export const register = async (req, res) => {
       phone,
       password_hash,
       role_name: 'Student',
+      pg_id,
       is_phone_verified: true
     });
 

@@ -23,6 +23,7 @@ import ProfileVerification from './pages/ProfileVerification';
 import TenantVerificationDashboard from './pages/TenantVerificationDashboard';
 import AdminNoticeBoard from './pages/AdminNoticeBoard';
 import AdminLogin from './pages/AdminLogin';
+import StudentRegister from './pages/StudentRegister';
 import AdminRegister from './pages/AdminRegister';
 import SuperAdminLogin from './pages/SuperAdminLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
@@ -35,6 +36,7 @@ const App = () => {
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<StudentRegister />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/register" element={<AdminRegister />} />
             <Route path="/super-admin/login" element={<SuperAdminLogin />} />

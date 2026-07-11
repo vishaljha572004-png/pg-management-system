@@ -230,11 +230,19 @@ const Login = () => {
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
             
-            <div className="text-center text-sm text-muted-foreground mt-4">
-              <span className="opacity-70">Admins? </span>
-              <Link to="/admin/login" className="font-semibold text-primary hover:underline">
-                Admin Portal
-              </Link>
+            <div className="text-center text-sm text-muted-foreground mt-4 space-y-2">
+              <div>
+                <span className="opacity-70">New student? </span>
+                <Link to="/register" className="font-semibold text-primary hover:underline">
+                  Create an account
+                </Link>
+              </div>
+              <div>
+                <span className="opacity-70">Admins? </span>
+                <Link to="/admin/login" className="font-semibold text-primary hover:underline">
+                  Admin Portal
+                </Link>
+              </div>
             </div>
           </form>
         </motion.div>
