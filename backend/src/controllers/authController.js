@@ -113,6 +113,10 @@ const handleLogin = async (req, res, allowedRoles) => {
     const { email, password, org_code } = req.body;
     let pg_id = undefined;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     // For students, resolve org_code to pg_id
     if (allowedRoles.includes('Student')) {
       if (!org_code) {
