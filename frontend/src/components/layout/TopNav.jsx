@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { Menu, Moon, Sun, User } from 'lucide-react';
 import NotificationBell from '../NotificationBell';
 import { AuthContext } from '../../contexts/AuthContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 export function TopNav({ setMobileOpen }) {
   const { user } = useContext(AuthContext);
@@ -59,9 +59,15 @@ export function TopNav({ setMobileOpen }) {
             <span className="text-sm font-semibold">{user?.name || 'User'}</span>
             <span className="text-xs text-muted-foreground capitalize">{user?.role || 'Role'}</span>
           </div>
-          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-            <User size={18} />
-          </div>
+          {user?.role === 'Student' ? (
+            <Link to="/student/profile" className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold hover:bg-primary/20 transition-colors cursor-pointer">
+              <User size={18} />
+            </Link>
+          ) : (
+            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+              <User size={18} />
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -9,7 +9,8 @@ import {
   ShieldCheck,
   Bell,
   CheckCircle2,
-  Megaphone
+  Megaphone,
+  User
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
@@ -133,6 +134,10 @@ const StudentDashboard = () => {
             </div>
           </Button>
           <div className="absolute right-0 mt-2 w-48 rounded-md bg-popover text-popover-foreground shadow-md border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+            <Link to="/student/profile" className="flex w-full items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
+              <User className="mr-2 h-4 w-4" />
+              My Profile
+            </Link>
             <Link to="/verify-profile" className="flex w-full items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
               <ShieldCheck className="mr-2 h-4 w-4" />
               Verify Profile
