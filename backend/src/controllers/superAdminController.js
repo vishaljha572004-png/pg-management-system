@@ -40,7 +40,7 @@ export const getPGs = async (req, res) => {
       SELECT 
         p.id, p.name, p.org_code, p.owner_name, p.contact_number, p.email, p.status, p.created_at,
         (SELECT COUNT(*) FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Student') as total_students,
-        (SELECT name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Admin' LIMIT 1) as admin_name,
+        (SELECT u.name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Admin' LIMIT 1) as admin_name,
         (SELECT email FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Admin' LIMIT 1) as admin_email,
         (SELECT phone FROM users u JOIN roles r ON u.role_id = r.id WHERE u.pg_id = p.id AND r.name = 'Admin' LIMIT 1) as admin_phone,
         (SELECT COUNT(*) FROM rooms r WHERE r.pg_id = p.id) as total_rooms,
