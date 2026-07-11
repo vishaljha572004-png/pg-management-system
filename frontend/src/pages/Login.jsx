@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,29 +11,56 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { PasswordInput } from '../components/ui/PasswordInput';
 import { OTPModal } from '../components/ui/OTPModal';
-import { X } from 'lucide-react';
+import { X, User, Building2 } from 'lucide-react';
 
-const loginSchema = z.object({
+const studentSchema = z.object({
   org_code: z.string().min(1, 'Organization Code is required'),
   email: z.string().min(1, 'Phone or Email is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
+const adminSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
 const Login = () => {
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
-    resolver: zodResolver(loginSchema)
+  const [role, setRole] = useState('student'); // 'student' or 'admin'
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // If someone navigates to /admin/login, switch to admin tab
+  useEffect(() => {
+    if (location.pathname === '/admin/login') {
+      setRole('admin');
+    }
+  }, [location.pathname]);
+
+  const { register: registerStudent, handleSubmit: handleStudentSubmit, setValue: setStudentValue, formState: { errors: studentErrors } } = useForm({
+    resolver: zodResolver(studentSchema)
   });
+
+  const { register: registerAdmin, handleSubmit: handleAdminSubmit, setValue: setAdminValue, formState: { errors: adminErrors } } = useForm({
+    resolver: zodResolver(adminSchema)
+  });
+
   const [rememberMe, setRememberMe] = useState(true);
 
-  React.useEffect(() => {
-    const saved = localStorage.getItem('studentLoginDetails');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.org_code) setValue('org_code', parsed.org_code);
-      if (parsed.email) setValue('email', parsed.email);
-      if (parsed.password) setValue('password', parsed.password);
+  useEffect(() => {
+    const savedStudent = localStorage.getItem('studentLoginDetails');
+    if (savedStudent) {
+      const parsed = JSON.parse(savedStudent);
+      if (parsed.org_code) setStudentValue('org_code', parsed.org_code);
+      if (parsed.email) setStudentValue('email', parsed.email);
+      if (parsed.password) setStudentValue('password', parsed.password);
     }
-  }, [setValue]);
+    const savedAdmin = localStorage.getItem('adminLoginDetails');
+    if (savedAdmin) {
+      const parsed = JSON.parse(savedAdmin);
+      if (parsed.email) setAdminValue('email', parsed.email);
+      if (parsed.password) setAdminValue('password', parsed.password);
+    }
+  }, [setStudentValue, setAdminValue]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPg, setShowForgotPg] = useState(false);
@@ -60,7 +87,7 @@ const Login = () => {
     }
   };
 
-  const onSubmit = async (data) => {
+  const onStudentSubmit = async (data) => {
     setIsLoading(true);
     try {
       const response = await api.post('/auth/login', data);
@@ -71,11 +98,11 @@ const Login = () => {
       } else {
         localStorage.removeItem('studentLoginDetails');
       }
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
     } catch (error) {
       const errData = error.response?.data;
       if (errData?.requires_otp) {
-        setPendingData({ ...data, phone: errData.phone });
+        setPendingData({ ...data, phone: errData.phone, role: 'student' });
         try {
           await api.post('/auth/otp/send', { phone: errData.phone, purpose: 'login' });
           setShowOTPModal(true);
@@ -91,17 +118,52 @@ const Login = () => {
     }
   };
 
+  const onAdminSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await api.post('/auth/admin/login', data);
+      toast.success(response.data.message);
+      login(response.data.user, response.data.accessToken);
+      if (rememberMe) {
+        localStorage.setItem('adminLoginDetails', JSON.stringify(data));
+      } else {
+        localStorage.removeItem('adminLoginDetails');
+      }
+      navigate('/admin-dashboard');
+    } catch (error) {
+      const errData = error.response?.data;
+      if (errData?.requires_otp) {
+        setPendingData({ ...data, phone: errData.phone, role: 'admin' });
+        try {
+          await api.post('/auth/otp/send', { phone: errData.phone, purpose: 'login' });
+          setShowOTPModal(true);
+        } catch (otpErr) {
+          toast.error(otpErr.response?.data?.message || 'Failed to send OTP');
+        }
+      } else {
+        toast.error(errData?.message || 'Login failed');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const onOTPVerified = async (otpToken) => {
     setShowOTPModal(false);
     setIsLoading(true);
     try {
-      const response = await api.post('/auth/login', { ...pendingData, otpToken });
+      const endpoint = pendingData.role === 'admin' ? '/auth/admin/login' : '/auth/login';
+      const response = await api.post(endpoint, { ...pendingData, otpToken });
       toast.success(response.data.message);
       login(response.data.user, response.data.accessToken);
-      if (rememberMe) {
-        localStorage.setItem('studentLoginDetails', JSON.stringify(pendingData));
+      
+      if (pendingData.role === 'admin') {
+        if (rememberMe) localStorage.setItem('adminLoginDetails', JSON.stringify(pendingData));
+        navigate('/admin-dashboard');
+      } else {
+        if (rememberMe) localStorage.setItem('studentLoginDetails', JSON.stringify(pendingData));
+        navigate('/dashboard');
       }
-      window.location.href = '/dashboard';
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed after OTP');
     } finally {
@@ -150,7 +212,7 @@ const Login = () => {
             transition={{ delay: 0.3 }}
             className="text-zinc-400 text-lg"
           >
-            Streamlined rent collection, verified profiles, and seamless complaint resolution. Built for the modern property owner.
+            Streamlined rent collection, verified profiles, and seamless complaint resolution. Built for the modern property owner and their tenants.
           </motion.p>
         </div>
 
@@ -169,82 +231,134 @@ const Login = () => {
         >
           <div className="space-y-2 text-center md:text-left">
             <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
-            <p className="text-muted-foreground">Enter your credentials to access your account</p>
+            <p className="text-muted-foreground">Please select your role to sign in</p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} action="#" method="POST">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Organization Code</label>
-                  <button type="button" onClick={() => setShowForgotPg(true)} className="text-sm font-medium text-primary hover:underline">Forgot Code?</button>
-                </div>
-                <Input
-                  {...register('org_code')}
-                  type="text"
-                  placeholder="e.g. PG123"
-                  className="uppercase"
-                />
-                {errors.org_code && <p className="text-destructive text-sm mt-1">{errors.org_code.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Mobile Number / Email</label>
-                <Input
-                  {...register('email')}
-                  id="email"
-                  type="text"
-                  autoComplete="username"
-                  placeholder="Enter registered mobile or email"
-                />
-                {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium leading-none">Password</label>
-                  <a href="#" className="text-sm font-medium text-primary hover:underline">Forgot password?</a>
-                </div>
-                <PasswordInput
-                  id="password"
-                  {...register('password')}
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                />
-                {errors.password && <p className="text-destructive text-sm mt-1">{errors.password.message}</p>}
-              </div>
-              
-              <div className="flex items-center space-x-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <label htmlFor="rememberMe" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Remember my details
-                </label>
-              </div>
-            </div>
+          {/* Role Selection Tabs */}
+          <div className="flex bg-muted/50 p-1 rounded-xl">
+            <button
+              onClick={() => {
+                setRole('student');
+                navigate('/login', { replace: true });
+              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-all ${role === 'student' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <User size={16} /> Student
+            </button>
+            <button
+              onClick={() => {
+                setRole('admin');
+                navigate('/admin/login', { replace: true });
+              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-all ${role === 'admin' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <Building2 size={16} /> PG Owner
+            </button>
+          </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </Button>
-            
-            <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-border/50">
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Don't have an account yet? </span>
+          {role === 'student' ? (
+            <form className="space-y-6" onSubmit={handleStudentSubmit(onStudentSubmit)}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Organization Code</label>
+                    <button type="button" onClick={() => setShowForgotPg(true)} className="text-sm font-medium text-primary hover:underline">Forgot Code?</button>
+                  </div>
+                  <Input
+                    {...registerStudent('org_code')}
+                    placeholder="e.g. PG123"
+                    className="uppercase"
+                  />
+                  {studentErrors.org_code && <p className="text-destructive text-sm mt-1">{studentErrors.org_code.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Mobile Number / Email</label>
+                  <Input
+                    {...registerStudent('email')}
+                    autoComplete="username"
+                    placeholder="Enter registered mobile or email"
+                  />
+                  {studentErrors.email && <p className="text-destructive text-sm mt-1">{studentErrors.email.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Password</label>
+                    <a href="#" className="text-sm font-medium text-primary hover:underline">Forgot password?</a>
+                  </div>
+                  <PasswordInput
+                    {...registerStudent('password')}
+                    autoComplete="current-password"
+                    placeholder="••••••••"
+                  />
+                  {studentErrors.password && <p className="text-destructive text-sm mt-1">{studentErrors.password.message}</p>}
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Signing in...' : 'Sign in as Student'}
+              </Button>
+              
+              <div className="text-center text-sm pt-4 border-t border-border/50">
+                <span className="text-muted-foreground">Don't have an account? </span>
                 <Link to="/register" className="font-semibold text-primary hover:underline">
                   Register as Student
                 </Link>
               </div>
-              <div className="text-center text-sm">
-                <span className="text-muted-foreground">Are you a PG Owner/Admin? </span>
-                <Link to="/admin/login" className="font-semibold text-primary hover:underline">
-                  Go to Admin Portal
+            </form>
+          ) : (
+            <form className="space-y-6" onSubmit={handleAdminSubmit(onAdminSubmit)}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Email Address</label>
+                  <Input
+                    {...registerAdmin('email')}
+                    type="email"
+                    autoComplete="username"
+                    placeholder="name@example.com"
+                  />
+                  {adminErrors.email && <p className="text-destructive text-sm mt-1">{adminErrors.email.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Password</label>
+                    <a href="#" className="text-sm font-medium text-primary hover:underline">Forgot password?</a>
+                  </div>
+                  <PasswordInput
+                    {...registerAdmin('password')}
+                    autoComplete="current-password"
+                    placeholder="••••••••"
+                  />
+                  {adminErrors.password && <p className="text-destructive text-sm mt-1">{adminErrors.password.message}</p>}
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Signing in...' : 'Sign in as PG Owner'}
+              </Button>
+              
+              <div className="text-center text-sm pt-4 border-t border-border/50">
+                <span className="text-muted-foreground">Don't have an account? </span>
+                <Link to="/admin/register" className="font-semibold text-primary hover:underline">
+                  Register your PG
                 </Link>
               </div>
+            </form>
+          )}
+
+          <div className="flex items-center justify-center pt-2">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <label htmlFor="rememberMe" className="text-sm font-medium leading-none text-muted-foreground">
+                Remember my details
+              </label>
             </div>
-          </form>
+          </div>
         </motion.div>
       </div>
 

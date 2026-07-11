@@ -37,7 +37,7 @@ const App = () => {
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<StudentRegister />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/login" element={<Login />} />
             <Route path="/admin/register" element={<AdminRegister />} />
             <Route path="/super-admin/login" element={<SuperAdminLogin />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
