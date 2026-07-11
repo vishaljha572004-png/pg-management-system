@@ -56,6 +56,21 @@ async function init() {
         console.log("Ensuring default roles exist...");
         await connection.query("INSERT IGNORE INTO roles (name) VALUES ('Super Admin'), ('Admin'), ('Student')");
         
+        // Ensure Super Admin exists
+        console.log("Ensuring Super Admin account exists...");
+        const [superAdmins] = await connection.query("SELECT id FROM users WHERE email = 'superadmin@pg.com'");
+        if (superAdmins.length === 0) {
+            const bcrypt = await import('bcrypt');
+            const hash = await bcrypt.hash('superadmin123', 10);
+            await connection.query(
+                "INSERT INTO users (name, email, phone, password_hash, role_id) VALUES ('Super Admin', 'superadmin@pg.com', '9999999999', ?, (SELECT id FROM roles WHERE name = 'Super Admin'))",
+                [hash]
+            );
+            console.log("Created default Super Admin account.");
+        } else {
+            console.log("Super Admin already exists.");
+        }
+        
         await connection.end();
         process.exit(0);
     } catch (e) {
