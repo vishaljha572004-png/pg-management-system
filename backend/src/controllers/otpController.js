@@ -9,6 +9,10 @@ const MAX_ATTEMPTS = 3;
 
 // Helper to generate a 6 digit OTP
 const generateOTP = () => {
+  // Always return 123456 for testing if no FAST2SMS key is present
+  if (!process.env.FAST2SMS_API_KEY) {
+    return '123456';
+  }
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
