@@ -29,17 +29,10 @@ export const verifyToken = (req, res, next) => {
 };
 
 export const authorizeRoles = (...allowedRoles) => {
-<<<<<<< HEAD
-  const normalizedRoles = allowedRoles.map(r => r.toString().trim().toLowerCase());
-  return (req, res, next) => {
-    const role = req.user?.role?.toString().trim().toLowerCase();
-    if (!role || !normalizedRoles.includes(role)) {
-=======
   return (req, res, next) => {
     console.log('authorizeRoles debug:', { user: req.user, role: req.user?.role, allowed: allowedRoles });
     if (!req.user || !req.user.role || !allowedRoles.includes(req.user.role)) {
       console.log('authorizeRoles FAIL!');
->>>>>>> 9203fd9 (Fix authorization bug: standardize role checking and strings)
       return res.status(403).json({ message: 'Forbidden, insufficient permissions' });
     }
     next();
