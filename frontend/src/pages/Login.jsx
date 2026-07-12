@@ -110,6 +110,9 @@ const Login = () => {
       } else {
         const errMsg = errData?.details ? `${errData.message}: ${errData.details}` : (errData?.message || 'Login failed');
         toast.error(errMsg);
+        // Clear cached credentials if login fails (e.g. user was deleted)
+        localStorage.removeItem('studentLoginDetails');
+        setRememberMe(false);
       }
     } finally {
       setIsLoading(false);
@@ -140,6 +143,9 @@ const Login = () => {
         }
       } else {
         toast.error(errData?.message || 'Login failed');
+        // Clear cached credentials if login fails (e.g. user was deleted)
+        localStorage.removeItem('adminLoginDetails');
+        setRememberMe(false);
       }
     } finally {
       setIsLoading(false);

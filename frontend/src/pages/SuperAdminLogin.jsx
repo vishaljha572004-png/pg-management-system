@@ -48,6 +48,8 @@ const SuperAdminLogin = () => {
       window.location.href = '/super-admin-dashboard';
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
+      localStorage.removeItem('superAdminLoginDetails');
+      setRememberMe(false);
     } finally {
       setIsLoading(false);
     }
