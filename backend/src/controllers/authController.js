@@ -146,7 +146,7 @@ export const register = async (req, res) => {
   }
 };
 
->>>>>>> b0476d1 (Fix admin authorization role normalization and consistent JWT role handling)
+
 const handleLogin = async (req, res, allowedRoles) => {
   try {
     const { email, password, org_code, otpToken } = req.body;

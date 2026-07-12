@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-<<<<<<< HEAD
 let poolConfig = {};
 if (process.env.DATABASE_URL || process.env.DB_URI) {
   // Support standard connection strings from cloud providers
@@ -28,20 +27,6 @@ if (process.env.DATABASE_URL || process.env.DB_URI) {
 
 // Cloud MySQL databases often require SSL; enable in production or when using known cloud hosts
 if (process.env.NODE_ENV === 'production' || (process.env.DB_HOST && process.env.DB_HOST.includes('aivencloud'))) {
-=======
-let poolConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'pg_management',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-};
-
-if (process.env.NODE_ENV === 'production' || (process.env.DB_HOST && process.env.DB_HOST.includes('aivencloud'))) {
->>>>>>> a038a21 (update)
   poolConfig.ssl = { rejectUnauthorized: false };
 }
 
