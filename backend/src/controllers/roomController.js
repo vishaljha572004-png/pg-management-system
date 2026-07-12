@@ -96,7 +96,7 @@ export const assignBed = async (req, res) => {
 
     // Assign bed to student (ensure bed belongs to PG)
     await pool.execute(
-      'UPDATE beds SET student_id = ?, status = "occupied" WHERE id = ? AND pg_id = ?',
+      'UPDATE beds SET student_id = ?, status = \'occupied\' WHERE id = ? AND pg_id = ?',
       [student_id, bed_id, pg_id]
     );
 
@@ -127,7 +127,7 @@ export const unassignBed = async (req, res) => {
     const student_id = bedRows[0]?.student_id;
 
     await pool.execute(
-      'UPDATE beds SET student_id = NULL, status = "available" WHERE id = ? AND pg_id = ?',
+      'UPDATE beds SET student_id = NULL, status = \'available\' WHERE id = ? AND pg_id = ?',
       [bed_id, pg_id]
     );
 
