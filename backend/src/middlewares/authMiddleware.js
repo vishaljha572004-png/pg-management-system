@@ -15,6 +15,9 @@ export const verifyToken = (req, res, next) => {
       return res.status(500).json({ message: 'Internal server configuration error' });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded && typeof decoded.role === 'string') {
+      decoded.role = decoded.role.trim();
+    }
     req.user = decoded; // { id, role, exp, iat, pg_id }
     next();
   } catch (error) {
@@ -26,9 +29,10 @@ export const verifyToken = (req, res, next) => {
 };
 
 export const authorizeRoles = (...allowedRoles) => {
-  const normalizedRoles = allowedRoles.map(r => r.toLowerCase());
+  const normalizedRoles = allowedRoles.map(r => r.toString().trim().toLowerCase());
   return (req, res, next) => {
-    if (!req.user || !req.user.role || !normalizedRoles.includes(req.user.role.toLowerCase())) {
+    const role = req.user?.role?.toString().trim().toLowerCase();
+    if (!role || !normalizedRoles.includes(role)) {
       return res.status(403).json({ message: 'Forbidden, insufficient permissions' });
     }
     next();

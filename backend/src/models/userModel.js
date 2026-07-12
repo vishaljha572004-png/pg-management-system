@@ -30,9 +30,10 @@ export const UserModel = {
 
   async create(user) {
     const { name, email, phone, password_hash, role_name = 'Student', pg_id = null, is_phone_verified = false } = user;
+    const normalizedRoleName = role_name?.toString().trim() || 'Student';
     const [result] = await pool.execute(
       `INSERT INTO users (name, email, phone, password_hash, role_id, pg_id, is_phone_verified) VALUES (?, ?, ?, ?, (SELECT id FROM roles WHERE name = ?), ?, ?)`,
-      [name, email, phone, password_hash, role_name, pg_id, is_phone_verified]
+      [name, email, phone, password_hash, normalizedRoleName, pg_id, is_phone_verified]
     );
     return result.insertId;
   },

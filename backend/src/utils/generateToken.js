@@ -4,9 +4,11 @@ export const generateTokens = (userId, role, pgId) => {
   const jwtSecret = process.env.JWT_SECRET || 'super_secret_fallback_key';
   const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'super_refresh_fallback_key';
 
+  const normalizedRole = role?.toString().trim();
+
   // Access Token (short lived)
   const accessToken = jwt.sign(
-    { id: userId, role, pg_id: pgId },
+    { id: userId, role: normalizedRole, pg_id: pgId },
     jwtSecret,
     { expiresIn: '15m' }
   );

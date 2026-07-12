@@ -146,21 +146,35 @@ export const register = async (req, res) => {
   }
 };
 
+>>>>>>> b0476d1 (Fix admin authorization role normalization and consistent JWT role handling)
 const handleLogin = async (req, res, allowedRoles) => {
   try {
-    const { email, password, otpToken } = req.body;
+    const { email, password, org_code, otpToken } = req.body;
+
+    let pg_id = undefined;
+
+    // For students, resolve org_code to pg_id
+    if (allowedRoles.map(r => r.toString().trim().toLowerCase()).includes('student')) {
+      if (!org_code) {
+        return res.status(400).json({ message: 'Organization Code is required for student login' });
+      }
+      const [pgRows] = await pool.execute("SELECT id FROM pgs WHERE org_code = ? AND status = 'active'", [org_code]);
+      if (pgRows.length === 0) {
+        return res.status(400).json({ message: 'Invalid Organization Code' });
+      }
+      pg_id = pgRows[0].id;
+    }
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    // Find user globally by email or phone (uniqueness is enforced on signup)
-    // Note: 'email' field actually receives either email or phone from frontend usually.
-    let user = await UserModel.findByEmail(email);
+    // Find user by email or phone, scoped to pg_id when applicable
+    let user = await UserModel.findByEmail(email, pg_id);
     if (!user) {
-        user = await UserModel.findByPhone(email);
+      user = await UserModel.findByPhone(email, pg_id);
     }
-    
+
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -202,14 +216,15 @@ const handleLogin = async (req, res, allowedRoles) => {
       }
     }
 
-    // Role Verification
-    const normalizedAllowedRoles = allowedRoles.map(r => r.toLowerCase());
-    if (!user.role || !normalizedAllowedRoles.includes(user.role.toLowerCase())) {
+    // Role Verification (normalized)
+    const normalizedUserRole = user.role?.toString().trim();
+    const normalizedAllowedRoles = allowedRoles.map(r => r.toString().trim().toLowerCase());
+    if (!normalizedAllowedRoles.includes(normalizedUserRole?.toLowerCase())) {
       return res.status(403).json({ message: 'You are not authorized to access this portal.' });
     }
 
     // Generate tokens
-    const { accessToken, refreshToken } = generateTokens(user.id, user.role, user.pg_id);
+    const { accessToken, refreshToken } = generateTokens(user.id, normalizedUserRole, user.pg_id);
 
     // Save refresh token in DB
     await UserModel.updateRefreshToken(user.id, refreshToken);
@@ -229,7 +244,7 @@ const handleLogin = async (req, res, allowedRoles) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: normalizedUserRole
       }
     });
   } catch (error) {
