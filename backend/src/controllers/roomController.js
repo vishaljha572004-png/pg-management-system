@@ -156,7 +156,7 @@ export const getUnassignedStudents = async (req, res) => {
       JOIN roles ro ON u.role_id = ro.id
       LEFT JOIN beds b ON u.id = b.student_id 
       LEFT JOIN rooms r ON b.room_id = r.id
-      WHERE ro.name = 'Student' AND u.status IN ('active', 'verified') AND u.pg_id = ?
+      WHERE ro.name = 'Student' AND u.status IN ('pending', 'active', 'verified') AND u.pg_id = ?
     `, [pg_id]);
     res.json(students);
   } catch (error) {
