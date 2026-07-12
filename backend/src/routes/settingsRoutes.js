@@ -38,6 +38,6 @@ router.use(verifyToken);
 router.get('/', getSettings);
 
 // Admin only
-router.put('/', authorizeRoles('admin'), upload.single('qr_image'), updateSettings);
+router.put('/', authorizeRoles('Admin'), upload.single('qr_image'), updateSettings);
 
 export default router;

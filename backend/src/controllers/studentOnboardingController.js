@@ -5,6 +5,11 @@ export const inviteStudent = async (req, res) => {
   try {
     const { name, email, phone } = req.body;
     const adminPgId = req.user.pg_id; // Added to token in authMiddleware
+    const role = req.user.role;
+
+    if (role !== 'Admin') {
+      return res.status(403).json({ message: 'Unauthorized. Only admins can onboard students.' });
+    }
 
     if (!adminPgId) {
       return res.status(403).json({ message: 'Unauthorized. Admin not associated with a PG.' });

@@ -20,13 +20,13 @@ const upload = multer({ storage: storage });
 router.use(verifyToken);
 
 // Student submits payment screenshot
-router.post('/submit', authorizeRoles('student'), upload.single('screenshot'), submitPayment);
+router.post('/submit', authorizeRoles('Student'), upload.single('screenshot'), submitPayment);
 
 // Admin verifies payment
-router.post('/verify', authorizeRoles('admin'), verifyPayment);
-router.get('/pending', authorizeRoles('admin'), getPendingVerifications);
+router.post('/verify', authorizeRoles('Admin'), verifyPayment);
+router.get('/pending', authorizeRoles('Admin'), getPendingVerifications);
 
 // Development mode payment simulation
-router.post('/simulate', authorizeRoles('student'), simulatePayment);
+router.post('/simulate', authorizeRoles('Student'), simulatePayment);
 
 export default router;

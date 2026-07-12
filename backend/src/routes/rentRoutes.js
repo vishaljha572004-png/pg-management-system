@@ -8,12 +8,12 @@ const router = express.Router();
 router.use(verifyToken);
 
 // --- Student Routes ---
-router.get('/my-rent', authorizeRoles('student'), getMyRentRecords);
-router.post('/my-rent/pay', authorizeRoles('student'), studentPayRent);
+router.get('/my-rent', authorizeRoles('Student'), getMyRentRecords);
+router.post('/my-rent/pay', authorizeRoles('Student'), studentPayRent);
 
 // --- Admin Routes ---
-router.post('/generate', authorizeRoles('admin'), generateMonthlyRent);
-router.get('/', authorizeRoles('admin'), getAllRentRecords);
-router.post('/pay', authorizeRoles('admin'), markRentAsPaid);
+router.post('/generate', authorizeRoles('Admin'), generateMonthlyRent);
+router.get('/', authorizeRoles('Admin'), getAllRentRecords);
+router.post('/pay', authorizeRoles('Admin'), markRentAsPaid);
 
 export default router;

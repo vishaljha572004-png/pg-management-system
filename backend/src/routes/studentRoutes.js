@@ -7,7 +7,7 @@ const router = express.Router();
 
 // All routes here should be protected and only for students
 router.use(verifyToken);
-router.use(authorizeRoles('student'));
+router.use(authorizeRoles('Student'));
 
 router.get('/dashboard', asyncHandler(getDashboardSummary));
 

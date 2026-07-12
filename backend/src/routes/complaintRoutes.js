@@ -13,11 +13,11 @@ const router = express.Router();
 router.use(verifyToken);
 
 // --- Student Routes ---
-router.post('/student', authorizeRoles('student'), raiseComplaint);
-router.get('/student', authorizeRoles('student'), getMyComplaints);
+router.post('/student', authorizeRoles('Student'), raiseComplaint);
+router.get('/student', authorizeRoles('Student'), getMyComplaints);
 
 // --- Admin Routes ---
-router.get('/admin', authorizeRoles('admin'), getAllComplaints);
-router.post('/admin/update', authorizeRoles('admin'), updateComplaintStatus);
+router.get('/admin', authorizeRoles('Admin'), getAllComplaints);
+router.post('/admin/update', authorizeRoles('Admin'), updateComplaintStatus);
 
 export default router;

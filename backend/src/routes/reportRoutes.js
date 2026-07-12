@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Only admin can access reports
 router.use(verifyToken);
-router.use(authorizeRoles('admin'));
+router.use(authorizeRoles('Admin'));
 
 router.get('/finance', getFinancialReport);
 router.get('/occupancy', getOccupancyReport);

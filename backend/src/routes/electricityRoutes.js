@@ -5,7 +5,7 @@ import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 router.use(verifyToken);
-router.use(authorizeRoles('admin'));
+router.use(authorizeRoles('Admin'));
 
 router.post('/', addElectricityBill);
 router.get('/', getAllElectricityBills);

@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get('/', getNotices);
-router.post('/', authorizeRoles('admin'), createNotice);
-router.delete('/:id', authorizeRoles('admin'), deleteNotice);
+router.post('/', authorizeRoles('Admin'), createNotice);
+router.delete('/:id', authorizeRoles('Admin'), deleteNotice);
 
 export default router;

@@ -87,7 +87,7 @@ router.get('/profile', verifyToken, asyncHandler(getProfile));
 router.put('/profile', verifyToken, asyncHandler(updateProfile));
 
 // Example of Admin only route (You can move this to other route files later)
-router.get('/admin-data', verifyToken, authorizeRoles('admin'), (req, res) => {
+router.get('/admin-data', verifyToken, authorizeRoles('Admin'), (req, res) => {
   res.json({ message: 'Welcome Admin' });
 });
 

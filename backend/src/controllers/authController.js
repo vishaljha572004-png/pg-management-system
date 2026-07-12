@@ -216,15 +216,13 @@ const handleLogin = async (req, res, allowedRoles) => {
       }
     }
 
-    // Role Verification (normalized)
-    const normalizedUserRole = user.role?.toString().trim();
-    const normalizedAllowedRoles = allowedRoles.map(r => r.toString().trim().toLowerCase());
-    if (!normalizedAllowedRoles.includes(normalizedUserRole?.toLowerCase())) {
+    // Role Verification
+    if (!user.role || !allowedRoles.includes(user.role)) {
       return res.status(403).json({ message: 'You are not authorized to access this portal.' });
     }
 
     // Generate tokens
-    const { accessToken, refreshToken } = generateTokens(user.id, normalizedUserRole, user.pg_id);
+    const { accessToken, refreshToken } = generateTokens(user.id, user.role, user.pg_id);
 
     // Save refresh token in DB
     await UserModel.updateRefreshToken(user.id, refreshToken);
@@ -244,7 +242,7 @@ const handleLogin = async (req, res, allowedRoles) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: normalizedUserRole
+        role: user.role
       }
     });
   } catch (error) {
