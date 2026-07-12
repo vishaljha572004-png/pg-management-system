@@ -14,8 +14,9 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const { data } = await api.get('/auth/profile');
-          setUser(data);
-          localStorage.setItem('user', JSON.stringify(data));
+          const normalized = { ...data, role: data.role?.toString().trim() };
+          setUser(normalized);
+          localStorage.setItem('user', JSON.stringify(normalized));
         } catch (error) {
           console.error('Failed to fetch profile', error);
           localStorage.removeItem('accessToken');
@@ -28,9 +29,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData, token) => {
+    const normalized = { ...userData, role: userData.role?.toString().trim() };
     localStorage.setItem('accessToken', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(normalized));
+    setUser(normalized);
   };
 
   const logout = async () => {
