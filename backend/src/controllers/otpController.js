@@ -115,7 +115,7 @@ export const verifyOtp = async (req, res) => {
     // This token is passed in the subsequent register request
     const otpToken = jwt.sign(
       { phone, verified: true, purpose },
-      process.env.JWT_SECRET || 'super_secret_access_key_2026',
+      process.env.JWT_SECRET || 'temp_dev_secret_only',
       { expiresIn: '15m' }
     );
 

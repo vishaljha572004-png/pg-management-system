@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 
 export const generateTokens = (userId, role, pgId) => {
-  const jwtSecret = process.env.JWT_SECRET || 'super_secret_fallback_key';
-  const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'super_refresh_fallback_key';
+  const jwtSecret = process.env.JWT_SECRET || 'temp_dev_secret_only';
+  const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'temp_dev_refresh_only';
 
   const normalizedRole = role?.toString().trim();
 

@@ -14,7 +14,7 @@ export const registerPG = async (req, res) => {
     }
 
     try {
-      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'super_secret_access_key_2026');
+      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'temp_dev_secret_only');
       if (decoded.phone !== phone || decoded.purpose !== 'admin_signup' || !decoded.verified) {
         return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
       }
@@ -100,7 +100,7 @@ export const register = async (req, res) => {
     }
 
     try {
-      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'super_secret_access_key_2026');
+      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'temp_dev_secret_only');
       if (decoded.phone !== phone || decoded.purpose !== 'student_signup' || !decoded.verified) {
         return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
       }
@@ -203,7 +203,7 @@ const handleLogin = async (req, res, allowedRoles) => {
 
       // Verify the OTP token provided by frontend after OTP flow
       try {
-        const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'super_secret_access_key_2026');
+        const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'temp_dev_secret_only');
         if (decoded.phone !== user.phone || decoded.purpose !== 'login' || !decoded.verified) {
           return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
         }
