@@ -175,7 +175,8 @@ const handleLogin = async (req, res, allowedRoles) => {
     }
 
     // OTP Verification Check (Bypass for Super Admin)
-    if (!user.is_phone_verified && user.role !== 'Super Admin') {
+    const isSuperAdmin = user.role && user.role.toLowerCase() === 'super admin';
+    if (!user.is_phone_verified && !isSuperAdmin) {
       if (!otpToken) {
         // Stop login, require OTP flow
         return res.status(403).json({ 
@@ -202,7 +203,8 @@ const handleLogin = async (req, res, allowedRoles) => {
     }
 
     // Role Verification
-    if (!allowedRoles.includes(user.role)) {
+    const normalizedAllowedRoles = allowedRoles.map(r => r.toLowerCase());
+    if (!user.role || !normalizedAllowedRoles.includes(user.role.toLowerCase())) {
       return res.status(403).json({ message: 'You are not authorized to access this portal.' });
     }
 
@@ -271,7 +273,7 @@ export const refresh = async (req, res) => {
     res.json({ accessToken });
   } catch (error) {
     console.error('Refresh Token Error:', error);
-    res.status(403).json({ message: 'Forbidden, invalid or expired refresh token' });
+    res.status(401).json({ message: 'Unauthorized, invalid or expired refresh token' });
   }
 };
 

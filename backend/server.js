@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -22,8 +23,23 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Important: configure CORS to allow credentials for cookies
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://pg-management-system-84bq.vercel.app',
+  'https://pg-management-system-pwkv.onrender.com'
+];
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://pg-management-system-84bq.vercel.app', process.env.FRONTEND_URL],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(helmet({ crossOriginResourcePolicy: false })); // Allow cross origin resource sharing for images
@@ -31,17 +47,7 @@ app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // For reading HTTP-only cookies
-app.use((req, res, next) => {
-  const cookieHeader = req.headers.cookie;
-  req.cookies = {};
-  if (cookieHeader) {
-    cookieHeader.split(';').forEach(cookie => {
-      const parts = cookie.split('=');
-      req.cookies[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-  }
-  next();
-});
+app.use(cookieParser());
 
 // Routes
 import authRoutes from './src/routes/authRoutes.js';

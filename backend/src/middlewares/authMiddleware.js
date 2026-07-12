@@ -11,7 +11,8 @@ export const verifyToken = (req, res, next) => {
 
   try {
     if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET is not defined in environment variables');
+      console.error('CRITICAL: JWT_SECRET is not defined in environment variables');
+      return res.status(500).json({ message: 'Internal server configuration error' });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { id, role, exp, iat, pg_id }
@@ -20,7 +21,7 @@ export const verifyToken = (req, res, next) => {
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token expired', expired: true });
     }
-    return res.status(403).json({ message: 'Forbidden, invalid token' });
+    return res.status(401).json({ message: 'Unauthorized, invalid token' });
   }
 };
 

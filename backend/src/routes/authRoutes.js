@@ -3,6 +3,7 @@ import { register, login, adminLogin, superAdminLogin, refresh, logout, getProfi
 import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
 import { sendOtp, verifyOtp } from '../controllers/otpController.js';
 import rateLimit from 'express-rate-limit';
+import { asyncHandler } from '../utils/asyncHandler.js';
 
 import { body, validationResult } from 'express-validator';
 
@@ -30,7 +31,7 @@ router.post('/register', [
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   validateRequest
-], register);
+], asyncHandler(register));
 
 router.post('/register-pg', [
   body('pg_name').trim().notEmpty().withMessage('PG Name is required'),
@@ -39,51 +40,51 @@ router.post('/register-pg', [
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   validateRequest
-], registerPG);
+], asyncHandler(registerPG));
 
 router.post('/login', [
   body('email').trim().notEmpty().withMessage('Email or Phone is required'),
   body('password').notEmpty().withMessage('Password is required'),
   validateRequest
-], login);
+], asyncHandler(login));
 
 router.post('/admin/login', [
   body('email').trim().isEmail().withMessage('Valid email is required'),
   body('password').notEmpty().withMessage('Password is required'),
   validateRequest
-], adminLogin);
+], asyncHandler(adminLogin));
 
 router.post('/super-admin/login', [
   body('email').trim().isEmail().withMessage('Valid email is required'),
   body('password').notEmpty().withMessage('Password is required'),
   validateRequest
-], superAdminLogin);
+], asyncHandler(superAdminLogin));
 
 router.post('/find-pg', [
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   validateRequest
-], findPG);
+], asyncHandler(findPG));
 
 // OTP Routes
 router.post('/otp/send', otpLimiter, [
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('purpose').trim().notEmpty().withMessage('Purpose is required'),
   validateRequest
-], sendOtp);
+], asyncHandler(sendOtp));
 
 router.post('/otp/verify', [
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('otp').trim().isLength({ min: 6, max: 6 }).withMessage('Valid 6-digit OTP is required'),
   body('purpose').trim().notEmpty().withMessage('Purpose is required'),
   validateRequest
-], verifyOtp);
+], asyncHandler(verifyOtp));
 
-router.post('/refresh', refresh);
-router.post('/logout', logout);
+router.post('/refresh', asyncHandler(refresh));
+router.post('/logout', asyncHandler(logout));
 
 // Protected Routes
-router.get('/profile', verifyToken, getProfile);
-router.put('/profile', verifyToken, updateProfile);
+router.get('/profile', verifyToken, asyncHandler(getProfile));
+router.put('/profile', verifyToken, asyncHandler(updateProfile));
 
 // Example of Admin only route (You can move this to other route files later)
 router.get('/admin-data', verifyToken, authorizeRoles('admin'), (req, res) => {
