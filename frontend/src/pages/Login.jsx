@@ -14,6 +14,7 @@ import { OTPModal } from '../components/ui/OTPModal';
 import { X, User, Building2 } from 'lucide-react';
 
 const studentSchema = z.object({
+  org_code: z.string().min(1, 'Organization Code is required'),
   email: z.string().min(1, 'Phone or Email is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
@@ -263,6 +264,18 @@ const Login = () => {
           {role === 'student' ? (
             <form className="space-y-6" onSubmit={handleStudentSubmit(onStudentSubmit)}>
               <div className="space-y-4">
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Organization Code</label>
+                    <button type="button" onClick={() => setShowForgotPg(true)} className="text-sm font-medium text-primary hover:underline">Forgot Code?</button>
+                  </div>
+                  <Input
+                    {...registerStudent('org_code')}
+                    placeholder="Enter your PG code (e.g., PG-123)"
+                  />
+                  {studentErrors.org_code && <p className="text-destructive text-sm mt-1">{studentErrors.org_code.message}</p>}
+                </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Mobile Number / Email</label>
