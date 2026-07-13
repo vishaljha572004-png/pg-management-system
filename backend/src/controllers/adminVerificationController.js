@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 
-// Get all pending profile verifications
+
 export const getPendingVerifications = async (req, res) => {
   try {
     const pg_id = req.user.pg_id;
@@ -18,10 +18,10 @@ export const getPendingVerifications = async (req, res) => {
   }
 };
 
-// Approve or reject identity verification
+
 export const verifyIdentity = async (req, res) => {
   try {
-    const { studentId, action, remarks } = req.body; // action: 'approve' or 'reject'
+    const { studentId, action, remarks } = req.body; 
     const pg_id = req.user.pg_id;
     if (!studentId || !action) return res.status(400).json({ message: 'Missing required fields' });
 
@@ -29,7 +29,7 @@ export const verifyIdentity = async (req, res) => {
       await pool.execute("UPDATE users SET status = 'verified' WHERE id = ? AND pg_id = ?", [studentId, pg_id]);
       await pool.execute("UPDATE student_profiles SET profile_status = 'approved' WHERE user_id = ? AND user_id IN (SELECT id FROM users WHERE pg_id = ?)", [studentId, pg_id]);
       
-      // Notify student
+      
       await pool.execute(`
         INSERT INTO notifications (user_id, title, message, type, pg_id)
         VALUES (?, 'Profile Approved', 'Your identity verification has been approved. You can now access the full dashboard.', 'verification', ?)
@@ -38,7 +38,7 @@ export const verifyIdentity = async (req, res) => {
       res.json({ message: 'Identity verification approved' });
     } else if (action === 'reject') {
       await pool.execute("UPDATE student_profiles SET profile_status = 'rejected', rejection_reason = ? WHERE user_id = ? AND user_id IN (SELECT id FROM users WHERE pg_id = ?)", [remarks || 'Invalid documents', studentId, pg_id]);
-      // Just notify them to re-upload. Keep users.status pending.
+      
       await pool.execute(`
         INSERT INTO notifications (user_id, title, message, type, pg_id)
         VALUES (?, 'Profile Rejected', 'Your identity verification was rejected. Reason: ${remarks || 'Invalid documents'}. Please update your profile.', 'verification', ?)
@@ -54,7 +54,7 @@ export const verifyIdentity = async (req, res) => {
   }
 };
 
-// Approve or reject police verification
+
 export const verifyPolice = async (req, res) => {
   try {
     const { studentId, action, remarks } = req.body;
@@ -85,23 +85,23 @@ export const verifyPolice = async (req, res) => {
   }
 };
 
-// Vacate Student
+
 export const vacateStudent = async (req, res) => {
   try {
     const { id } = req.params;
     const { exit_reason } = req.body;
     const pg_id = req.user.pg_id;
 
-    // 1. Mark as vacated and save exit reason
+    
     await pool.execute("UPDATE users SET status = 'vacated' WHERE id = ? AND pg_id = ?", [id, pg_id]);
     await pool.execute("UPDATE student_profiles SET exit_date = CURRENT_DATE, exit_reason = ? WHERE user_id = ? AND user_id IN (SELECT id FROM users WHERE pg_id = ?)", [exit_reason || 'No reason provided', id, pg_id]);
     
-    // 2. Release room & bed
+    
     await pool.execute("UPDATE beds SET status = 'available', student_id = NULL WHERE student_id = ? AND pg_id = ?", [id, pg_id]);
     
-    // Stop billing happens automatically since status is 'vacated' and they have no bed.
+    
 
-    // Notify student
+    
     await pool.execute(`
       INSERT INTO notifications (user_id, title, message, type, pg_id)
       VALUES (?, 'Room Vacated', 'You have been vacated from your room by the admin.', 'system', ?)
@@ -114,15 +114,15 @@ export const vacateStudent = async (req, res) => {
   }
 };
 
-// Remove Student
+
 export const removeStudent = async (req, res) => {
   try {
     const { id } = req.params;
-    const { type } = req.body; // 'soft' or 'permanent'
+    const { type } = req.body; 
     const pg_id = req.user.pg_id;
 
     if (type === 'permanent') {
-      // Check pending payments
+      
       const [pendingPayments] = await pool.execute(`
         SELECT COUNT(*) as count FROM (
           SELECT id FROM rent_payments WHERE student_id = ? AND status IN ('pending', 'overdue')
@@ -135,17 +135,17 @@ export const removeStudent = async (req, res) => {
         return res.status(400).json({ message: 'Cannot permanently delete. Student has pending dues.' });
       }
 
-      // Release room & bed
+      
       await pool.execute("UPDATE beds SET status = 'available', student_id = NULL WHERE student_id = ? AND pg_id = ?", [id, pg_id]);
       
       await pool.execute("DELETE FROM users WHERE id = ? AND pg_id = ?", [id, pg_id]);
       res.json({ message: 'Student permanently deleted' });
     } else {
-      // Soft delete
+      
       await pool.execute("UPDATE users SET status = 'removed' WHERE id = ? AND pg_id = ?", [id, pg_id]);
       await pool.execute("UPDATE beds SET status = 'available', student_id = NULL WHERE student_id = ? AND pg_id = ?", [id, pg_id]);
       
-      // Notify student
+      
       await pool.execute(`
         INSERT INTO notifications (user_id, title, message, type, pg_id)
         VALUES (?, 'Account Access Removed', 'Your access to the hostel system has been restricted by the admin.', 'system', ?)

@@ -130,7 +130,7 @@ const PaymentVerification = () => {
         )}
       </div>
 
-      {/* Image Modal */}
+      {}
       <AnimatePresence>
         {selectedImage && (
           <motion.div 
@@ -152,7 +152,7 @@ const PaymentVerification = () => {
           </motion.div>
         )}
 
-        {/* Rejection Modal */}
+        {}
         {rejectionModal.isOpen && (
           <motion.div 
             initial={{ opacity: 0 }}

@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 
-// --- Student: Raise a new complaint ---
+
 export const raiseComplaint = async (req, res) => {
   try {
     const { title, description } = req.body;
@@ -24,7 +24,7 @@ export const raiseComplaint = async (req, res) => {
   }
 };
 
-// --- Student: Get my complaints ---
+
 export const getMyComplaints = async (req, res) => {
   try {
     const student_id = req.user.id;
@@ -39,7 +39,7 @@ export const getMyComplaints = async (req, res) => {
   }
 };
 
-// --- Admin: Get all complaints ---
+
 export const getAllComplaints = async (req, res) => {
   try {
     const pg_id = req.user.pg_id;
@@ -59,7 +59,7 @@ export const getAllComplaints = async (req, res) => {
   }
 };
 
-// --- Admin: Update complaint status ---
+
 export const updateComplaintStatus = async (req, res) => {
   try {
     const { complaint_id, status, resolution_remark } = req.body;
@@ -78,7 +78,7 @@ export const updateComplaintStatus = async (req, res) => {
       return res.status(404).json({ message: 'Complaint not found' });
     }
 
-    // Get student_id to notify
+    
     const [complaintData] = await pool.execute('SELECT student_id, title FROM complaints WHERE id = ?', [complaint_id]);
     if (complaintData.length > 0) {
       const { student_id, title } = complaintData[0];

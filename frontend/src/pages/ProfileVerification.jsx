@@ -31,7 +31,7 @@ const ProfileVerification = () => {
         }
         setProfile(data);
       } catch (_error) {
-        // Handle 404 naturally since no profile might exist yet
+        
       } finally {
         setLoading(false);
       }

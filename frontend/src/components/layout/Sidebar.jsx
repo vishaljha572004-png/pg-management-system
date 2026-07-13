@@ -21,7 +21,7 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
     }
   }, [user]);
 
-  // Prevent background scrolling on mobile when sidebar is open
+  
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = 'hidden';
@@ -37,7 +37,7 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -50,7 +50,7 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
         )}
       </AnimatePresence>
 
-      {/* Sidebar Container */}
+      {}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-background transition-all duration-300 lg:translate-x-0",
@@ -92,7 +92,7 @@ export function Sidebar({ menuItems, mobileOpen, setMobileOpen }) {
                 <NavLink
                   key={index}
                   to={item.path}
-                  onClick={() => setMobileOpen(false)} // Fixed: Close sidebar on mobile navigation
+                  onClick={() => setMobileOpen(false)} 
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors relative group",
                     isActive 

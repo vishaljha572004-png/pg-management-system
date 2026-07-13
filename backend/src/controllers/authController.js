@@ -22,7 +22,7 @@ export const registerPG = async (req, res) => {
       return res.status(400).json({ message: 'OTP token is expired or invalid. Please verify mobile again.' });
     }
 
-    // Check if user exists
+    
     const existingUser = await UserModel.findByEmail(email);
     const existingPhone = await UserModel.findByPhone(phone);
     if (existingUser || existingPhone) {
@@ -31,7 +31,7 @@ export const registerPG = async (req, res) => {
 
     let org_code = generateOrgCode(pg_name);
     
-    // Ensure org code uniqueness
+    
     let isUnique = false;
     while (!isUnique) {
       const [existing] = await pool.execute('SELECT id FROM pgs WHERE org_code = ?', [org_code]);
@@ -42,18 +42,18 @@ export const registerPG = async (req, res) => {
       }
     }
 
-    // Insert PG
+    
     const [pgResult] = await pool.execute(
       'INSERT INTO pgs (name, org_code, owner_name, contact_number, email) VALUES (?, ?, ?, ?, ?)',
       [pg_name, org_code, owner_name, phone, email]
     );
     const pg_id = pgResult.insertId;
 
-    // Hash password
+    
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
 
-    // Create Admin User
+    
     const userId = await UserModel.create({
       name: owner_name,
       email,
@@ -64,7 +64,7 @@ export const registerPG = async (req, res) => {
       is_phone_verified: true
     });
 
-    // Generate tokens for auto-login
+    
     const { accessToken, refreshToken } = generateTokens(userId, 'Admin', pg_id);
     await UserModel.updateRefreshToken(userId, refreshToken);
 
@@ -72,7 +72,7 @@ export const registerPG = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000 
     });
 
     res.status(201).json({ 
@@ -108,7 +108,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'OTP token is expired or invalid. Please verify mobile again.' });
     }
 
-    // Check if user exists
+    
     const existingUser = await UserModel.findByEmail(email);
     const existingPhone = await UserModel.findByPhone(phone);
     if (existingUser || existingPhone) {
@@ -124,11 +124,11 @@ export const register = async (req, res) => {
       pg_id = pgRows[0].id;
     }
 
-    // Hash password
+    
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
 
-    // Create user strictly as Student
+    
     const userId = await UserModel.create({
       name,
       email,
@@ -153,7 +153,7 @@ const handleLogin = async (req, res, allowedRoles) => {
 
     let pg_id = undefined;
 
-    // For students, resolve org_code to pg_id
+    
     if (allowedRoles.map(r => r.toString().trim().toLowerCase()).includes('student')) {
       if (!org_code) {
         return res.status(400).json({ message: 'Organization Code is required for student login' });
@@ -169,7 +169,7 @@ const handleLogin = async (req, res, allowedRoles) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    // Find user by email or phone, scoped to pg_id when applicable
+    
     let user = await UserModel.findByEmail(email, pg_id);
     if (!user) {
       user = await UserModel.findByPhone(email, pg_id);
@@ -179,7 +179,7 @@ const handleLogin = async (req, res, allowedRoles) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Verify password
+    
     if (!user.password_hash) {
       return res.status(400).json({ message: 'Invalid credentials. Please reset your password or contact admin.' });
     }
@@ -188,11 +188,11 @@ const handleLogin = async (req, res, allowedRoles) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // OTP Verification Check (Bypass for Super Admin)
+    
     const isSuperAdmin = user.role && user.role.toLowerCase() === 'super admin';
     if (!user.is_phone_verified && !isSuperAdmin) {
       if (!otpToken) {
-        // Stop login, require OTP flow
+        
         return res.status(403).json({ 
           requires_otp: true, 
           phone: user.phone, 
@@ -201,14 +201,14 @@ const handleLogin = async (req, res, allowedRoles) => {
         });
       }
 
-      // Verify the OTP token provided by frontend after OTP flow
+      
       try {
         const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'temp_dev_secret_only');
         if (decoded.phone !== user.phone || decoded.purpose !== 'login' || !decoded.verified) {
           return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
         }
         
-        // Mark as verified in DB
+        
         await UserModel.markPhoneVerified(user.id);
         user.is_phone_verified = true;
       } catch (err) {
@@ -216,23 +216,23 @@ const handleLogin = async (req, res, allowedRoles) => {
       }
     }
 
-    // Role Verification
+    
     if (!user.role || !allowedRoles.includes(user.role)) {
       return res.status(403).json({ message: 'You are not authorized to access this portal.' });
     }
 
-    // Generate tokens
+    
     const { accessToken, refreshToken } = generateTokens(user.id, user.role, user.pg_id);
 
-    // Save refresh token in DB
+    
     await UserModel.updateRefreshToken(user.id, refreshToken);
 
-    // Set refresh token in HTTP-only cookie
+    
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000 
     });
 
     res.json({
@@ -266,17 +266,17 @@ export const refresh = async (req, res) => {
       return res.status(401).json({ message: 'Unauthorized, no refresh token' });
     }
 
-    // Verify refresh token
+    
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'fallback_refresh_secret');
     
-    // Validate with DB (optional but secure)
-    // Here we can fetch the user to get their role and verify if refresh_token matches DB
+    
+    
     const user = await UserModel.findById(decoded.id);
     if (!user) {
       return res.status(401).json({ message: 'Unauthorized, invalid token' });
     }
 
-    // Generate new access token
+    
     const accessToken = jwt.sign(
       { id: user.id, role: user.role, pg_id: user.pg_id },
       process.env.JWT_SECRET || 'fallback_secret',
@@ -295,7 +295,7 @@ export const logout = async (req, res) => {
     const refreshToken = req.cookies?.refreshToken;
     
     if (refreshToken) {
-      // Decode slightly to get user ID without enforcing expiration (for cleanup)
+      
       const decoded = jwt.decode(refreshToken);
       if (decoded && decoded.id) {
         await UserModel.clearRefreshToken(decoded.id);
@@ -341,7 +341,7 @@ export const updateProfile = async (req, res) => {
     updateQuery += ' WHERE id = ?';
     params.push(userId);
 
-    // Using the internal pool for this quick update
+    
     const pool = (await import('../config/db.js')).default;
     await pool.execute(updateQuery, params);
 
@@ -356,8 +356,8 @@ export const findPG = async (req, res) => {
   try {
     const { phone, otp } = req.body;
     
-    // Simulate OTP verification
-    if (otp !== '1234') { // Hardcoded for demo/simulation
+    
+    if (otp !== '1234') { 
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 

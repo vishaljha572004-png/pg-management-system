@@ -18,7 +18,7 @@ const run = async () => {
 
     console.log('Connected to database.');
 
-    // 1. Update users table status ENUM
+    
     try {
       await connection.query(`
         ALTER TABLE users 
@@ -29,7 +29,7 @@ const run = async () => {
       console.log('Error updating users status:', e.message);
     }
 
-    // 2. Create student_profiles table
+    
     await connection.query(`
       CREATE TABLE IF NOT EXISTS student_profiles (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,7 +74,7 @@ const run = async () => {
     `);
     console.log('Created student_profiles table.');
 
-    // 3. Create notifications table
+    
     await connection.query(`
       CREATE TABLE IF NOT EXISTS notifications (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -89,7 +89,7 @@ const run = async () => {
     `);
     console.log('Created notifications table.');
 
-    // 4. Update notices table
+    
     try {
       await connection.query(`
         ALTER TABLE notices

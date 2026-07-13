@@ -41,7 +41,7 @@ const StudentProfile = () => {
       await api.put('/auth/profile', payload);
       toast.success('Profile updated successfully');
       
-      // Update local state to reflect new phone
+      
       setProfile({ ...profile, phone: data.phone });
       setIsEditing(false);
       
@@ -60,7 +60,7 @@ const StudentProfile = () => {
       <div className="max-w-2xl w-full space-y-8 mt-10">
         
         <Card className="overflow-hidden relative border-none shadow-xl">
-          {/* Background decorative blob */}
+          {}
           <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-20 dark:opacity-40 animate-blob"></div>
 
           <CardContent className="p-8">

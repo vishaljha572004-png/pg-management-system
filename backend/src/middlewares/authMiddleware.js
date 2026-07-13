@@ -18,7 +18,7 @@ export const verifyToken = (req, res, next) => {
     if (decoded && typeof decoded.role === 'string') {
       decoded.role = decoded.role.trim();
     }
-    req.user = decoded; // { id, role, exp, iat, pg_id }
+    req.user = decoded; 
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {

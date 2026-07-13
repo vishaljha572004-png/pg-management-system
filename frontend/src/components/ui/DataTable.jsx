@@ -16,7 +16,7 @@ export function DataTable({
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Sorting logic
+  
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -37,7 +37,7 @@ export function DataTable({
     return sortableItems;
   }, [data, sortConfig]);
 
-  // Filtering logic
+  
   const filteredData = React.useMemo(() => {
     if (!searchTerm) return sortedData;
     const lowercasedTerm = searchTerm.toLowerCase();
@@ -48,7 +48,7 @@ export function DataTable({
     });
   }, [sortedData, searchTerm]);
 
-  // Pagination logic
+  
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,

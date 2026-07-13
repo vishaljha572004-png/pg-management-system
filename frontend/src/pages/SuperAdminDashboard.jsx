@@ -8,23 +8,23 @@ import toast from 'react-hot-toast';
 import api from '../services/api';
 
 const SuperAdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('pgs'); // 'pgs' or 'admins'
+  const [activeTab, setActiveTab] = useState('pgs'); 
   
-  // PGs State
+  
   const [pgs, setPGs] = useState([]);
   const [showCreatePG, setShowCreatePG] = useState(false);
   const [pgFormData, setPgFormData] = useState({ name: '', owner_name: '', contact_number: '', email: '' });
   
-  // Hostels Search & Filter State
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   
-  // Hostel Details Modal State
+  
   const [selectedHostelId, setSelectedHostelId] = useState(null);
   const [hostelDetails, setHostelDetails] = useState(null);
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   
-  // Admins State
+  
   const [admins, setAdmins] = useState([]);
   const [showCreateAdmin, setShowCreateAdmin] = useState(false);
   const [adminFormData, setAdminFormData] = useState({ name: '', email: '', phone: '', password: '', pg_id: '' });
@@ -39,7 +39,7 @@ const SuperAdminDashboard = () => {
       } else {
         const response = await api.get('/super-admin/admins');
         setAdmins(response.data);
-        // Also fetch PGs for dropdown
+        
         const pgResponse = await api.get('/super-admin/pgs');
         setPGs(pgResponse.data);
       }
@@ -53,7 +53,7 @@ const SuperAdminDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
-  // --- PG Handlers ---
+  
   const handleCreatePG = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -93,7 +93,7 @@ const SuperAdminDashboard = () => {
     }
   };
 
-  // --- Admin Handlers ---
+  
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -369,7 +369,7 @@ const SuperAdminDashboard = () => {
         </div>
       )}
 
-      {/* Hostel Details Modal */}
+      {}
       {selectedHostelId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
           <div className="bg-background w-full max-w-4xl rounded-lg shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -383,7 +383,7 @@ const SuperAdminDashboard = () => {
               ) : hostelDetails ? (
                 <div className="space-y-8">
                   
-                  {/* Basic Info & Stats */}
+                  {}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card>
                       <CardHeader className="pb-2">
@@ -434,7 +434,7 @@ const SuperAdminDashboard = () => {
                     </Card>
                   </div>
 
-                  {/* Admins List */}
+                  {}
                   <div>
                     <h4 className="text-md font-semibold mb-3 border-b pb-1">Administrators</h4>
                     {hostelDetails.admins.length > 0 ? (
@@ -457,7 +457,7 @@ const SuperAdminDashboard = () => {
                     )}
                   </div>
 
-                  {/* Students Sample */}
+                  {}
                   <div>
                     <h4 className="text-md font-semibold mb-3 border-b pb-1 flex justify-between">
                       <span>Registered Students</span>

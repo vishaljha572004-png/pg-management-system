@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 
-// Get current student's profile
+
 export const getMyProfile = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -30,7 +30,7 @@ export const updateProfile = async (req, res) => {
       police_verification_number, police_station_name, police_verification_date, submitForVerification
     } = req.body;
 
-    // Handle uploaded files
+    
     const files = req.files || {};
     const aadhaar_front = files.aadhaar_front ? `/uploads/${files.aadhaar_front[0].filename}` : null;
     const aadhaar_back = files.aadhaar_back ? `/uploads/${files.aadhaar_back[0].filename}` : null;
@@ -40,11 +40,11 @@ export const updateProfile = async (req, res) => {
     const selfie = files.selfie ? `/uploads/${files.selfie[0].filename}` : null;
     const police_document = files.police_document ? `/uploads/${files.police_document[0].filename}` : null;
 
-    // Check if profile exists
+    
     const [existing] = await pool.execute('SELECT * FROM student_profiles WHERE user_id = ?', [studentId]);
 
     if (existing.length === 0) {
-      // Insert new profile
+      
       const newStatus = submitForVerification ? 'submitted' : 'incomplete';
       await pool.execute(`
         INSERT INTO student_profiles (
@@ -60,7 +60,7 @@ export const updateProfile = async (req, res) => {
         police_document ? 'submitted' : 'pending', police_verification_number || null, police_station_name || null, police_verification_date || null, police_document, newStatus
       ]);
     } else {
-      // Update existing profile (keeping old files if not re-uploaded)
+      
       const old = existing[0];
       const newStatus = submitForVerification ? 'submitted' : 'incomplete';
       await pool.execute(`
@@ -84,10 +84,10 @@ export const updateProfile = async (req, res) => {
     }
 
     if (submitForVerification) {
-      // Set user status to pending
+      
       await pool.execute('UPDATE users SET status = ? WHERE id = ? AND pg_id = ?', ['pending', studentId, req.user.pg_id]);
 
-      // Trigger notification for admin of this specific PG
+      
       await pool.execute(`
         INSERT INTO notifications (user_id, title, message, type, pg_id)
         SELECT u.id, 'Profile Verification Pending', 'A new student has submitted their profile for verification.', 'verification', ?

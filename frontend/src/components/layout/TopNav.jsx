@@ -25,7 +25,7 @@ export function TopNav({ setMobileOpen }) {
     }
   };
 
-  // Generate breadcrumb from pathname
+  
   const pathParts = location.pathname.split('/').filter(Boolean);
   const breadcrumb = pathParts.map(part => part.charAt(0).toUpperCase() + part.slice(1).replace('-', ' ')).join(' / ');
 

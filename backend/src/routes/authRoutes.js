@@ -18,14 +18,14 @@ const validateRequest = (req, res, next) => {
 const router = express.Router();
 
 const otpLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, 
   max: 5, // Limit each IP to 5 OTP requests per `window` (here, per 15 minutes)
   message: { message: 'Too many OTP requests from this IP, please try again after 15 minutes' },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  legacyHeaders: false, 
 });
 
-// Public Routes
+
 router.post('/register', [
   body('name').trim().notEmpty().withMessage('Name is required'),
   body('phone').trim().notEmpty().withMessage('Phone is required'),
@@ -65,7 +65,7 @@ router.post('/find-pg', [
   validateRequest
 ], asyncHandler(findPG));
 
-// OTP Routes
+
 router.post('/otp/send', otpLimiter, [
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('purpose').trim().notEmpty().withMessage('Purpose is required'),
@@ -82,11 +82,11 @@ router.post('/otp/verify', [
 router.post('/refresh', asyncHandler(refresh));
 router.post('/logout', asyncHandler(logout));
 
-// Protected Routes
+
 router.get('/profile', verifyToken, asyncHandler(getProfile));
 router.put('/profile', verifyToken, asyncHandler(updateProfile));
 
-// Example of Admin only route (You can move this to other route files later)
+
 router.get('/admin-data', verifyToken, authorizeRoles('Admin'), (req, res) => {
   res.json({ message: 'Welcome Admin' });
 });

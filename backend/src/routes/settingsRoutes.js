@@ -12,13 +12,13 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Multer config for file upload
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Uploads directory in root of backend
+    cb(null, 'uploads/'); 
   },
   filename: function (req, file, cb) {
-    // e.g. qr-1623847293847.png
+    
     cb(null, 'qr-' + Date.now() + path.extname(file.originalname));
   }
 });
@@ -34,16 +34,16 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 }, 
   fileFilter: fileFilter
 });
 
 router.use(verifyToken);
 
-// Public (to authenticated users, i.e., students need to see it)
+
 router.get('/', getSettings);
 
-// Admin only
+
 router.put('/', authorizeRoles('Admin'), upload.single('qr_image'), updateSettings);
 
 export default router;

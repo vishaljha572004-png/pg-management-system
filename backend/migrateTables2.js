@@ -13,7 +13,7 @@ async function run() {
         await connection.query(`ALTER TABLE ${table} ADD CONSTRAINT fk_${table}_pg FOREIGN KEY (pg_id) REFERENCES pgs(id) ON DELETE CASCADE`);
       } catch (e) {}
       
-      // Update existing
+      
       const [existingPGs] = await connection.query('SELECT id FROM pgs WHERE org_code = ?', ['DEFAULT001']);
       if (existingPGs[0]) {
         await connection.query(`UPDATE ${table} SET pg_id = ? WHERE pg_id IS NULL`, [existingPGs[0].id]);

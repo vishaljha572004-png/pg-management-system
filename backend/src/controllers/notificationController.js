@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 
-// Get notifications for a user (or admin)
+
 export const getNotifications = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -26,7 +26,7 @@ export const getNotifications = async (req, res) => {
   }
 };
 
-// Mark as read
+
 export const markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
@@ -38,7 +38,7 @@ export const markAsRead = async (req, res) => {
   }
 };
 
-// Mark all as read
+
 export const markAllAsRead = async (req, res) => {
   try {
     const pgId = req.user.pg_id || null;
@@ -49,7 +49,7 @@ export const markAllAsRead = async (req, res) => {
   }
 };
 
-// Delete notification
+
 export const deleteNotification = async (req, res) => {
   try {
     const { id } = req.params;

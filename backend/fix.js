@@ -30,7 +30,7 @@ async function run() {
       database: database.trim(),
     });
 
-    // Test connection
+    
     await pool.execute('SELECT 1');
     console.log('✅ Connection Successful!');
 

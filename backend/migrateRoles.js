@@ -6,7 +6,7 @@ async function migrateRoles() {
   try {
     await connection.beginTransaction();
 
-    // 1. Create Roles Table
+    
     console.log('Creating roles table...');
     await connection.query(`
       CREATE TABLE IF NOT EXISTS roles (
@@ -15,13 +15,13 @@ async function migrateRoles() {
       )
     `);
 
-    // 2. Insert Default Roles
+    
     console.log('Inserting default roles...');
     await connection.query(`
       INSERT IGNORE INTO roles (name) VALUES ('Super Admin'), ('Admin'), ('Student')
     `);
 
-    // 3. Add role_id to Users table
+    
     console.log('Adding role_id column to users table...');
     try {
       await connection.query('ALTER TABLE users ADD COLUMN role_id INT');
@@ -30,15 +30,15 @@ async function migrateRoles() {
        console.log('role_id column already exists');
     }
 
-    // 4. Migrate Data
+    
     console.log('Migrating existing user roles...');
     const [roles] = await connection.query('SELECT id, name FROM roles');
     const roleMap = {};
     roles.forEach(r => roleMap[r.name.toLowerCase()] = r.id);
     
-    // Update users
+    
     try {
-        // Attempt to migrate using old role column if it still exists
+        
         await connection.query(`UPDATE users SET role_id = ? WHERE role = 'student'`, [roleMap['student']]);
         await connection.query(`UPDATE users SET role_id = ? WHERE role = 'admin'`, [roleMap['admin']]);
         await connection.query(`UPDATE users SET role_id = ? WHERE role_id IS NULL`, [roleMap['student']]);
@@ -47,7 +47,7 @@ async function migrateRoles() {
         console.log('Old role column not found, skipping enum data migration.');
     }
 
-    // 5. Add Foreign Key
+    
     console.log('Adding foreign key constraint...');
     try {
       await connection.query(`
@@ -63,7 +63,7 @@ async function migrateRoles() {
        }
     }
 
-    // 6. Create Default Super Admin
+    
     console.log('Checking for Super Admin account...');
     const [superAdmins] = await connection.query('SELECT * FROM users WHERE email = ?', ['superadmin@pg.com']);
     if (superAdmins.length === 0) {
@@ -78,7 +78,7 @@ async function migrateRoles() {
         await connection.query('UPDATE users SET role_id = ? WHERE email = ?', [roleMap['super admin'], 'superadmin@pg.com']);
     }
     
-    // 7. Drop old role column
+    
     console.log('Dropping old role enum column...');
     try {
         await connection.query('ALTER TABLE users DROP COLUMN role');

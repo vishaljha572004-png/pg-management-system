@@ -4,7 +4,7 @@ const fixDb = async () => {
   try {
     console.log('Dropping old tables to fix schema mismatch...');
     
-    // Disable foreign key checks temporarily to drop tables in any order
+    
     await pool.query('SET FOREIGN_KEY_CHECKS = 0');
     
     await pool.query('DROP TABLE IF EXISTS rent_payments');

@@ -10,7 +10,7 @@ const StudentPayments = () => {
   const [payments, setPayments] = useState([]);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeModal, setActiveModal] = useState(null); // { id, type }
+  const [activeModal, setActiveModal] = useState(null); 
 
   const fetchPayments = async () => {
     try {
@@ -38,7 +38,7 @@ const StudentPayments = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 sm:p-6 lg:p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-8">
         
-        {/* Header */}
+        {}
         <div className="flex items-center gap-4">
           <div className="p-4 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl shadow-lg shadow-indigo-500/30">
              <CreditCard size={28} />
@@ -49,7 +49,7 @@ const StudentPayments = () => {
           </div>
         </div>
 
-        {/* Payments List */}
+        {}
         <div className="space-y-5">
           {loading ? (
             <div className="space-y-4">
@@ -82,7 +82,7 @@ const StudentPayments = () => {
                 key={payment.id} 
                 className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:shadow-md transition-shadow relative overflow-hidden"
               >
-                {/* Decoration */}
+                {}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
 
                 <div className="flex-1 relative z-10">

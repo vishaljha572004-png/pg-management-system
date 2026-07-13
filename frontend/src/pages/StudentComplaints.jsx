@@ -43,13 +43,13 @@ const StudentComplaints = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6">
       <div className="max-w-4xl mx-auto space-y-8">
         
-        {/* Header */}
+        {}
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">My Complaints</h1>
           <p className="text-slate-500 dark:text-slate-400">Raise issues or track existing ones.</p>
         </div>
 
-        {/* Raise Complaint Form */}
+        {}
         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
           <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <MessageSquareWarning className="text-indigo-600" /> Raise New Complaint
@@ -69,7 +69,7 @@ const StudentComplaints = () => {
           </form>
         </div>
 
-        {/* Complaint History */}
+        {}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">Complaint History</h2>
           

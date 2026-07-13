@@ -11,7 +11,7 @@ const AdminNoticeBoard = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    target_type: 'all', // all, room, individual
+    target_type: 'all', 
     target_id: '',
     is_pinned: false,
     expiry_date: ''
@@ -83,7 +83,7 @@ const AdminNoticeBoard = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6 md:p-10 max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
       
-      {/* Left Col: Create Notice */}
+      {}
       <div className="w-full lg:w-1/3">
         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 sticky top-10">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
@@ -141,7 +141,7 @@ const AdminNoticeBoard = () => {
         </div>
       </div>
 
-      {/* Right Col: Notice List */}
+      {}
       <div className="w-full lg:w-2/3 space-y-4">
         {loading ? <div className="text-center py-10">Loading...</div> : notices.length === 0 ? (
           <div className="bg-white dark:bg-slate-800 p-10 text-center rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-500">No notices published yet.</div>

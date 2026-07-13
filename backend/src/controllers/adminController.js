@@ -14,7 +14,7 @@ export const getAdminDashboardSummary = async (req, res) => {
     `, [pg_id]);
     const stats = studentRows[0];
 
-    // 2. Total Rooms & Available Beds
+    
     const [roomRows] = await pool.execute(`SELECT COUNT(*) as count FROM rooms WHERE pg_id = ?`, [pg_id]);
     const totalRooms = roomRows[0].count;
 
@@ -27,7 +27,7 @@ export const getAdminDashboardSummary = async (req, res) => {
     const availableBeds = bedRows[0].availableBeds || 0;
     const occupiedBeds = bedRows[0].occupiedBeds || 0;
 
-    // 3. Pending Rent Count & Amount (For current month roughly, or just all pending)
+    
     const [rentRows] = await pool.execute(`
       SELECT COUNT(*) as count, IFNULL(SUM(amount), 0) as totalPending 
       FROM rent_payments 
@@ -36,11 +36,11 @@ export const getAdminDashboardSummary = async (req, res) => {
     const pendingRentCount = rentRows[0].count;
     const totalPendingAmount = rentRows[0].totalPending;
 
-    // 4. Open Complaints
+    
     const [complaintRows] = await pool.execute(`SELECT COUNT(*) as count FROM complaints WHERE status = 'open' AND pg_id = ?`, [pg_id]);
     const openComplaints = complaintRows[0].count;
 
-    // We assume student_profiles is tied to user_id. We can join users to get pg_id.
+    
     const [policeRows] = await pool.execute(`
       SELECT COUNT(*) as count 
       FROM student_profiles sp 
@@ -49,7 +49,7 @@ export const getAdminDashboardSummary = async (req, res) => {
     `, [pg_id]);
     const pendingPoliceVerification = policeRows[0].count;
 
-    // Monthly Revenue (Paid Rent in current month)
+    
     const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
     const [revenueRows] = await pool.execute(`
       SELECT IFNULL(SUM(amount), 0) as revenue 
@@ -58,7 +58,7 @@ export const getAdminDashboardSummary = async (req, res) => {
     `, [currentMonth, pg_id]);
     const monthlyRevenue = revenueRows[0].revenue;
 
-    // Get PG Details
+    
     const [pgRows] = await pool.execute('SELECT name, org_code FROM pgs WHERE id = ?', [pg_id]);
     const pgName = pgRows[0]?.name || 'My PG';
     const orgCode = pgRows[0]?.org_code || '';
@@ -86,7 +86,7 @@ export const getAdminDashboardSummary = async (req, res) => {
   }
 };
 
-// Get all students with their room details
+
 export const getAllStudents = async (req, res) => {
   try {
     const pg_id = req.user.pg_id;

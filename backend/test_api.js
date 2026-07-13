@@ -1,6 +1,6 @@
 async function testApi() {
   try {
-    // 1. Login as admin
+    
     const loginRes = await fetch('http://localhost:5000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -14,7 +14,7 @@ async function testApi() {
 
     const headers = { Authorization: `Bearer ${token}` };
 
-    // 2. Test Reports Analytics
+    
     console.log('Testing /api/reports/finance');
     const financeRes = await fetch('http://localhost:5000/api/reports/finance', { headers });
     const financeData = await financeRes.json();

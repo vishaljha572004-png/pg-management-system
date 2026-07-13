@@ -6,7 +6,7 @@ import { XCircle, Upload, Info, QrCode, CreditCard, FileCheck, CheckCircle } fro
 import api, { BASE_URL } from '../services/api';
 
 const QRPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studentInfo }) => {
-  const [step, setStep] = useState(1); // 1: Scan, 2: Details
+  const [step, setStep] = useState(1); 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [file, setFile] = useState(null);
@@ -54,7 +54,7 @@ const QRPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studen
     >
       <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-800 my-auto">
         
-        {/* Header */}
+        {}
         <div className="p-6 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 flex justify-between items-start">
            <div>
              <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -67,7 +67,7 @@ const QRPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studen
            </button>
         </div>
 
-        {/* Timeline */}
+        {}
         <div className="px-8 pt-6 pb-2">
            <div className="flex items-center justify-between relative">
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full z-0"></div>
@@ -92,7 +92,7 @@ const QRPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studen
             {step === 1 ? (
               <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6 text-center">
                 
-                {/* Payment summary box */}
+                {}
                 <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 flex justify-between items-center border border-slate-100 dark:border-slate-700">
                   <div className="text-left">
                      <p className="text-xs text-slate-500 font-semibold uppercase">Amount Due</p>
@@ -104,7 +104,7 @@ const QRPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studen
                   </div>
                 </div>
 
-                {/* Main QR Display */}
+                {}
                 <div className="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border-2 border-slate-100 dark:border-slate-700 inline-block w-full max-w-[280px] relative group overflow-hidden">
                    {settings?.qr_image_url ? (
                      <div className="aspect-square relative flex items-center justify-center bg-white rounded-xl">
@@ -142,7 +142,7 @@ const QRPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studen
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   
-                  {/* Modern Floating Label Inputs */}
+                  {}
                   <div className="relative">
                     <input 
                       type="text" 

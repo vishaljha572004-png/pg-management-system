@@ -5,7 +5,7 @@ dotenv.config();
 
 let poolConfig = {};
 if (process.env.DATABASE_URL || process.env.DB_URI) {
-  // Support standard connection strings from cloud providers
+  
   poolConfig = {
     uri: process.env.DATABASE_URL || process.env.DB_URI,
     waitForConnections: true,
@@ -25,19 +25,19 @@ if (process.env.DATABASE_URL || process.env.DB_URI) {
   };
 }
 
-// Cloud MySQL databases often require SSL; enable in production or when using known cloud hosts
+
 if (process.env.NODE_ENV === 'production' || (process.env.DB_HOST && process.env.DB_HOST.includes('aivencloud'))) {
   poolConfig.ssl = { rejectUnauthorized: false };
 }
 
 const pool = mysql.createPool(poolConfig);
 
-// Test the connection
+
 pool.getConnection()
   .then(connection => {
     console.log('✅ Successfully connected to the MySQL database.');
     
-    // Auto-patch missing columns to prevent 500 errors in production
+    
     connection.query('ALTER TABLE users ADD COLUMN refresh_token TEXT NULL')
       .then(() => console.log('✅ Auto-patched: Added refresh_token to users table.'))
       .catch(e => {

@@ -171,7 +171,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Header Section */}
+      {}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-primary/5 p-6 rounded-2xl border border-primary/10">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white flex items-center gap-3">
@@ -239,7 +239,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpis.map((kpi, index) => (
           <Card key={index}>
@@ -258,7 +258,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
-        {/* Chart Section */}
+        {}
         <Card className="lg:col-span-5">
           <CardHeader>
             <CardTitle>Revenue Overview</CardTitle>
@@ -271,7 +271,7 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Action Center */}
+        {}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Action Center</CardTitle>

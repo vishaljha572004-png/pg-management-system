@@ -4,7 +4,7 @@ import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// Strict protection, only 'admin' role can access room management
+
 router.use(verifyToken);
 router.use(authorizeRoles('Admin'));
 

@@ -34,7 +34,7 @@ const App = () => {
       <AuthProvider>
         <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
           <Routes>
-            {/* Public Routes */}
+            {}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<StudentRegister />} />
             <Route path="/admin/login" element={<Login />} />
@@ -42,7 +42,7 @@ const App = () => {
             <Route path="/super-admin/login" element={<SuperAdminLogin />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
 
-            {/* Protected Student Routes */}
+            {}
             <Route element={<ProtectedRoute allowedRoles={['Student']} />}>
               <Route element={<StudentLayout />}>
                 <Route path="/verify-profile" element={<ProfileVerification />} />
@@ -53,7 +53,7 @@ const App = () => {
               </Route>
             </Route>
 
-            {/* Protected Admin Routes */}
+            {}
             <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
               <Route element={<AdminLayout />}>
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
@@ -70,7 +70,7 @@ const App = () => {
               </Route>
             </Route>
 
-            {/* Protected Super Admin Routes */}
+            {}
             <Route element={<ProtectedRoute allowedRoles={['Super Admin']} />}>
               <Route path="/super-admin-dashboard" element={<SuperAdminDashboard />} />
             </Route>

@@ -25,11 +25,11 @@ const adminSchema = z.object({
 });
 
 const Login = () => {
-  const [role, setRole] = useState('student'); // 'student' or 'admin'
+  const [role, setRole] = useState('student'); 
   const location = useLocation();
   const navigate = useNavigate();
 
-  // If someone navigates to /admin/login, switch to admin tab
+  
   useEffect(() => {
     if (location.pathname === '/admin/login') {
       setRole('admin');
@@ -111,7 +111,7 @@ const Login = () => {
       } else {
         const errMsg = errData?.details ? `${errData.message}: ${errData.details}` : (errData?.message || 'Login failed');
         toast.error(errMsg);
-        // Clear cached credentials if login fails (e.g. user was deleted)
+        
         localStorage.removeItem('studentLoginDetails');
         setRememberMe(false);
       }
@@ -144,7 +144,7 @@ const Login = () => {
         }
       } else {
         toast.error(errData?.message || 'Login failed');
-        // Clear cached credentials if login fails (e.g. user was deleted)
+        
         localStorage.removeItem('adminLoginDetails');
         setRememberMe(false);
       }
@@ -178,9 +178,9 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Left side - Branding/Illustration */}
+      {}
       <div className="hidden md:flex w-1/2 bg-zinc-900 relative flex-col justify-between p-12 text-white overflow-hidden">
-        {/* Abstract Background pattern */}
+        {}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -226,7 +226,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Right side - Login Form */}
+      {}
       <div className="flex w-full md:w-1/2 items-center justify-center p-8 sm:p-12">
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
@@ -239,7 +239,7 @@ const Login = () => {
             <p className="text-muted-foreground">Please select your role to sign in</p>
           </div>
 
-          {/* Role Selection Tabs */}
+          {}
           <div className="flex bg-muted/50 p-1 rounded-xl">
             <button
               onClick={() => {
@@ -368,7 +368,7 @@ const Login = () => {
         </motion.div>
       </div>
 
-      {/* Forgot PG Code Modal */}
+      {}
       {showForgotPg && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <motion.div 

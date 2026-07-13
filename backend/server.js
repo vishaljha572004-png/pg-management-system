@@ -10,19 +10,19 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Wait, I will use manual cookie parsing or add cookie-parser.
-// Let's add cookie-parser dynamically. Or I can just parse cookies manually, but better to use cookie-parser.
-// Let me write the standard server.js first.
+
+
+
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// Important: configure CORS to allow credentials for cookies
+
 const allowedOrigins = [
   'http://localhost:5173',
   'https://pg-management-system-84bq.vercel.app',
@@ -42,14 +42,14 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(helmet({ crossOriginResourcePolicy: false })); // Allow cross origin resource sharing for images
+app.use(helmet({ crossOriginResourcePolicy: false })); 
 app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// For reading HTTP-only cookies
+
 app.use(cookieParser());
 
-// Routes
+
 import authRoutes from './src/routes/authRoutes.js';
 import studentRoutes from './src/routes/studentRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
@@ -80,12 +80,12 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/super-admin', superAdminRoutes);
 
-// Base Route
+
 app.get('/', (req, res) => {
   res.send('PG Management API is running...');
 });
 
-// Global Error Handler
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!', error: err.message });

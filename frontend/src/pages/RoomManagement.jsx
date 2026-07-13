@@ -13,7 +13,7 @@ const RoomManagement = () => {
   const [unassignedStudents, setUnassignedStudents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Form for creating new room
+  
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   const fetchRoomsAndStudents = async () => {
@@ -73,7 +73,7 @@ const RoomManagement = () => {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
-      {/* Header */}
+      {}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-primary/10 text-primary rounded-xl">
@@ -86,7 +86,7 @@ const RoomManagement = () => {
         </div>
       </div>
 
-      {/* Create Room Card */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -131,7 +131,7 @@ const RoomManagement = () => {
         </CardContent>
       </Card>
 
-      {/* Rooms List */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {rooms.map(room => (
           <Card key={room.id} className="overflow-hidden flex flex-col">

@@ -6,14 +6,14 @@ export const generateTokens = (userId, role, pgId) => {
 
   const normalizedRole = role?.toString().trim();
 
-  // Access Token (short lived)
+  
   const accessToken = jwt.sign(
     { id: userId, role: normalizedRole, pg_id: pgId },
     jwtSecret,
     { expiresIn: '15m' }
   );
 
-  // Refresh Token (long lived)
+  
   const refreshToken = jwt.sign(
     { id: userId, pg_id: pgId },
     jwtRefreshSecret,

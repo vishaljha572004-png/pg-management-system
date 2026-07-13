@@ -31,7 +31,7 @@ const run = async () => {
       }
     }
 
-    // Set existing pending verification users to submitted
+    
     await connection.query(`
       UPDATE student_profiles sp
       JOIN users u ON sp.user_id = u.id
@@ -39,7 +39,7 @@ const run = async () => {
       WHERE u.status = 'pending' AND sp.profile_status = 'incomplete'
     `);
     
-    // Set existing verified users to approved
+    
     await connection.query(`
       UPDATE student_profiles sp
       JOIN users u ON sp.user_id = u.id

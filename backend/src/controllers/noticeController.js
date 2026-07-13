@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 
-// Get notices for a user
+
 export const getNotices = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -12,7 +12,7 @@ export const getNotices = async (req, res) => {
       return res.json(rows);
     }
     
-    // For students: Get 'all', individual 'user_id', or their 'room_id'
+    
     const [bed] = await pool.execute('SELECT room_id FROM beds WHERE student_id = ?', [userId]);
     const roomId = bed.length > 0 ? bed[0].room_id : null;
     
@@ -34,7 +34,7 @@ export const getNotices = async (req, res) => {
   }
 };
 
-// Create notice (Admin only)
+
 export const createNotice = async (req, res) => {
   try {
     const { title, description, target_type, target_id, is_pinned, expiry_date } = req.body;
@@ -45,7 +45,7 @@ export const createNotice = async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `, [title, description, target_type || 'all', target_id || null, is_pinned || false, expiry_date || null, pg_id]);
     
-    // Create notifications for the targets
+    
     if (target_type === 'individual' && target_id) {
       await pool.execute('INSERT INTO notifications (user_id, title, message, type, pg_id) VALUES (?, ?, ?, ?, ?)', [target_id, 'New Notice: ' + title, description, 'notice', pg_id]);
     } else if (target_type === 'room' && target_id) {
@@ -67,7 +67,7 @@ export const createNotice = async (req, res) => {
   }
 };
 
-// Delete notice (Admin only)
+
 export const deleteNotice = async (req, res) => {
   try {
     const { id } = req.params;

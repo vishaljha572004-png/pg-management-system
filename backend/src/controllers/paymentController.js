@@ -1,10 +1,10 @@
 import pool from '../config/db.js';
 
-// Student submits payment for verification
+
 export const submitPayment = async (req, res) => {
   try {
     const studentId = req.user.id;
-    const { id, type, transaction_id, payment_date } = req.body; // type: 'rent' or 'electricity'
+    const { id, type, transaction_id, payment_date } = req.body; 
     
     if (!id || !type || !transaction_id || !payment_date) {
       return res.status(400).json({ message: 'Missing required fields' });
@@ -17,13 +17,13 @@ export const submitPayment = async (req, res) => {
 
     const table = type === 'rent' ? 'rent_payments' : 'electricity_bills';
     
-    // Verify it belongs to the student (for rent) or their room (for electricity)
+    
     if (type === 'rent') {
       const [existing] = await pool.execute(`SELECT id, status FROM rent_payments WHERE id = ? AND student_id = ?`, [id, studentId]);
       if (existing.length === 0) return res.status(404).json({ message: 'Record not found' });
       if (existing[0].status === 'paid') return res.status(400).json({ message: 'Already paid' });
     } else {
-      // Find room id of student
+      
       const [bed] = await pool.execute('SELECT room_id FROM beds WHERE student_id = ?', [studentId]);
       if (bed.length === 0) return res.status(404).json({ message: 'Student not assigned to any bed' });
       const [existing] = await pool.execute(`SELECT id, status FROM electricity_bills WHERE id = ? AND room_id = ?`, [id, bed[0].room_id]);
@@ -31,7 +31,7 @@ export const submitPayment = async (req, res) => {
       if (existing[0].status === 'paid') return res.status(400).json({ message: 'Already paid' });
     }
 
-    // Update status to pending_verification
+    
     const query = `
       UPDATE ${table} 
       SET status = 'pending_verification', transaction_id = ?, payment_date = ?, screenshot_url = ? 
@@ -46,10 +46,10 @@ export const submitPayment = async (req, res) => {
   }
 };
 
-// Admin verifies payment (approves or rejects)
+
 export const verifyPayment = async (req, res) => {
   try {
-    const { id, type, action, rejection_reason } = req.body; // action: 'approve' or 'reject'
+    const { id, type, action, rejection_reason } = req.body; 
     const pg_id = req.user.pg_id;
     
     if (!id || !type || !action) {
@@ -74,11 +74,11 @@ export const verifyPayment = async (req, res) => {
   }
 };
 
-// Admin gets all pending verification payments
+
 export const getPendingVerifications = async (req, res) => {
   try {
     const pg_id = req.user.pg_id;
-    // Fetch pending rent
+    
     const [rentRows] = await pool.execute(`
       SELECT r.id, r.amount, r.billing_month, r.transaction_id, r.payment_date, r.screenshot_url, 'rent' as type, u.name as student_name, u.id as student_id
       FROM rent_payments r
@@ -86,7 +86,7 @@ export const getPendingVerifications = async (req, res) => {
       WHERE r.status = 'pending_verification' AND r.pg_id = ?
     `, [pg_id]);
 
-    // Fetch pending electricity
+    
     const [elecRows] = await pool.execute(`
       SELECT e.id, e.amount, e.billing_month, e.transaction_id, e.payment_date, e.screenshot_url, 'electricity' as type, rm.room_number
       FROM electricity_bills e
@@ -101,7 +101,7 @@ export const getPendingVerifications = async (req, res) => {
   }
 };
 
-// Student simulates payment via Development Gateway
+
 export const simulatePayment = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -113,7 +113,7 @@ export const simulatePayment = async (req, res) => {
 
     const table = type === 'rent' ? 'rent_payments' : 'electricity_bills';
     
-    // Verify it belongs to the student (for rent) or their room (for electricity)
+    
     if (type === 'rent') {
       const [existing] = await pool.execute(`SELECT id, status FROM rent_payments WHERE id = ? AND student_id = ?`, [id, studentId]);
       if (existing.length === 0) return res.status(404).json({ message: 'Record not found' });
@@ -126,7 +126,7 @@ export const simulatePayment = async (req, res) => {
       if (existing[0].status === 'paid') return res.status(400).json({ message: 'Already paid' });
     }
 
-    // Mark as paid immediately since it's development mode
+    
     const query = `
       UPDATE ${table} 
       SET status = 'paid', transaction_id = ?, payment_date = ?

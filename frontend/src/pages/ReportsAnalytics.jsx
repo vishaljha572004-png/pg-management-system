@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { BarChart3, PieChart } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-// Register Chart.js components
+
 ChartJS.register(
   CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement
 );
@@ -43,7 +43,7 @@ const ReportsAnalytics = () => {
 
   if (loading) return <div className="p-10 flex justify-center"><div className="animate-spin rounded-full h-10 w-10 border-t-2 border-indigo-500"></div></div>;
 
-  // Chart Configs
+  
   const barChartData = {
     labels: financeData.map(d => d.billing_month),
     datasets: [
@@ -75,7 +75,7 @@ const ReportsAnalytics = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* Header */}
+        {}
         <div className="flex items-center gap-3">
           <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-xl">
             <BarChart3 size={28} />
@@ -87,7 +87,7 @@ const ReportsAnalytics = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Revenue Bar Chart (Takes up 2 cols) */}
+          {}
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -110,7 +110,7 @@ const ReportsAnalytics = () => {
             </div>
           </motion.div>
 
-          {/* Occupancy Pie Chart */}
+          {}
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -148,7 +148,7 @@ const ReportsAnalytics = () => {
           </motion.div>
         </div>
 
-        {/* Complaint Metrics Row */}
+        {}
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

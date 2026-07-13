@@ -7,7 +7,7 @@ export const getSettings = async (req, res) => {
   try {
     const pg_id = req.user.pg_id;
     
-    // Fallback: If user has no pg_id (Super Admin?) or we are using a tenant
+    
     if (!pg_id) {
        return res.json({ pg_name: '', upi_id: '', account_name: '', qr_image_url: null });
     }
@@ -35,7 +35,7 @@ export const updateSettings = async (req, res) => {
     }
     
     if (req.file) {
-      // Optimize image using sharp
+      
       const optimizedFilename = `qr-${pg_id}-${Date.now()}.webp`;
       const optimizedPath = path.join(req.file.destination, optimizedFilename);
       
@@ -44,7 +44,7 @@ export const updateSettings = async (req, res) => {
         .webp({ quality: 85 })
         .toFile(optimizedPath);
         
-      // Clean up original uploaded file to save space
+      
       fs.unlink(req.file.path, (err) => {
         if (err) console.error('Failed to delete original upload:', err);
       });

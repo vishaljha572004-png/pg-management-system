@@ -57,9 +57,9 @@ const SuperAdminLogin = () => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Left side - Branding/Illustration */}
+      {}
       <div className="hidden lg:flex w-1/2 bg-zinc-900 relative flex-col justify-between p-12 text-white overflow-hidden">
-        {/* Abstract Background pattern */}
+        {}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -105,7 +105,7 @@ const SuperAdminLogin = () => {
         </div>
       </div>
 
-      {/* Right side - Login Form */}
+      {}
       <div className="flex w-full lg:w-1/2 items-center justify-center p-8 sm:p-12">
         <motion.div 
           initial={{ opacity: 0, x: 20 }}

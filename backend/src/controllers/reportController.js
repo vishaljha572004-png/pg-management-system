@@ -2,7 +2,7 @@ import pool from '../config/db.js';
 
 export const getFinancialReport = async (req, res) => {
   try {
-    // Group rent payments by billing_month and status to see revenue vs pending
+    
     const [revenueData] = await pool.execute(`
       SELECT billing_month, 
              SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) as total_collected,
@@ -22,7 +22,7 @@ export const getFinancialReport = async (req, res) => {
 
 export const getOccupancyReport = async (req, res) => {
   try {
-    // Get total beds and occupied beds
+    
     const [stats] = await pool.execute(`
       SELECT 
         COUNT(id) as total_beds,
@@ -40,7 +40,7 @@ export const getOccupancyReport = async (req, res) => {
 
 export const getComplaintReport = async (req, res) => {
   try {
-    // Group complaints by status
+    
     const [complaintStats] = await pool.execute(`
       SELECT status, COUNT(*) as count
       FROM complaints

@@ -21,7 +21,7 @@ const PROCESSING_STEPS = [
 ];
 
 const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studentInfo }) => {
-  const [step, setStep] = useState('select_method'); // select_method, processing, success, error
+  const [step, setStep] = useState('select_method'); 
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [processingMsgIndex, setProcessingMsgIndex] = useState(0);
   const [transactionData, setTransactionData] = useState(null);
@@ -31,10 +31,10 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
     setSelectedMethod(methodId);
     setStep('processing');
     
-    // Simulate processing steps
+    
     for (let i = 0; i < PROCESSING_STEPS.length - 1; i++) {
       setProcessingMsgIndex(i);
-      await new Promise(r => setTimeout(r, 600 + Math.random() * 400)); // Total ~2-3 seconds
+      await new Promise(r => setTimeout(r, 600 + Math.random() * 400)); 
     }
 
     try {
@@ -57,7 +57,7 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
       });
       
       setProcessingMsgIndex(PROCESSING_STEPS.length - 1);
-      await new Promise(r => setTimeout(r, 800)); // show success message briefly
+      await new Promise(r => setTimeout(r, 800)); 
       setStep('success');
     } catch (error) {
       setSimulatedError(error.response?.data?.message || 'Payment simulation failed due to server error.');
@@ -69,7 +69,7 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
     generateReceipt({
       ...paymentDetails,
       transaction_id: transactionData.transaction_id,
-      amount: paymentDetails.amount, // keeping it for receipt generator
+      amount: paymentDetails.amount, 
       receipt_number: transactionData.receipt_number,
       student_name: studentInfo?.name,
       room_number: studentInfo?.room_number,
@@ -88,12 +88,12 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
     >
       <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-800 my-auto relative">
         
-        {/* Development Badge */}
+        {}
         <div className="absolute top-5 left-6 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider shadow-sm z-10 flex items-center gap-1">
           <AlertCircle size={12} /> Dev Mode
         </div>
 
-        {/* Header */}
+        {}
         <div className="px-6 pt-14 pb-5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 relative">
            <div className="text-center">
              <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center mx-auto mb-3">
@@ -110,7 +110,7 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
            )}
         </div>
 
-        {/* Timeline */}
+        {}
         <div className="px-8 pt-6 pb-2">
            <div className="flex items-center justify-between relative">
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full z-0"></div>
@@ -137,11 +137,11 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
         <div className="p-6 sm:p-8">
           <AnimatePresence mode="wait">
             
-            {/* Step 1: Select Method */}
+            {}
             {step === 'select_method' && (
               <motion.div key="select" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
                 
-                {/* Premium Payment Summary Card */}
+                {}
                 <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-3xl p-6 mb-6 text-white shadow-xl shadow-indigo-900/20 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
                   <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-500/20 rounded-full blur-xl -ml-10 -mb-10"></div>
@@ -194,7 +194,7 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
               </motion.div>
             )}
 
-            {/* Step 2: Processing */}
+            {}
             {step === 'processing' && (
               <motion.div key="processing" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} className="py-16 text-center space-y-8">
                  <div className="relative w-32 h-32 mx-auto">
@@ -233,7 +233,7 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
               </motion.div>
             )}
 
-            {/* Step 3: Success */}
+            {}
             {step === 'success' && (
               <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
                  <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6 relative">
@@ -245,7 +245,7 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Payment Successful</h2>
                  <p className="text-slate-500 dark:text-slate-400 mb-8">Your transaction has been verified.</p>
 
-                 {/* Receipt Preview */}
+                 {}
                  <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-5 mb-8 text-left border-2 border-dashed border-slate-200 dark:border-slate-700 relative overflow-hidden">
                     <div className="absolute -top-3 -right-3 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl"></div>
                     
@@ -292,7 +292,7 @@ const DevelopmentPaymentGateway = ({ onClose, paymentDetails, settings, onSucces
               </motion.div>
             )}
 
-            {/* Step 4: Error */}
+            {}
             {step === 'error' && (
               <motion.div key="error" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
                  <div className="w-24 h-24 bg-rose-100 dark:bg-rose-900/30 rounded-full flex items-center justify-center mx-auto mb-6">

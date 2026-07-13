@@ -21,7 +21,7 @@ const NotificationBell = () => {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); // Check every minute
+    const interval = setInterval(fetchNotifications, 60000); 
     return () => clearInterval(interval);
   }, []);
 

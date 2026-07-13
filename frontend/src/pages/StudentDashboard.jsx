@@ -104,7 +104,7 @@ const StudentDashboard = () => {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
-      {/* Welcome Banner */}
+      {}
       <div className="relative overflow-hidden rounded-2xl bg-zinc-900 px-8 py-10 shadow-lg flex justify-between items-start">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -146,7 +146,7 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-      {/* Verification Reminders */}
+      {}
       {(data.profile_status !== 'approved' || data.police_status !== 'approved') && (
         <div className="grid gap-4 md:grid-cols-2">
           {data.profile_status !== 'approved' && (
@@ -188,7 +188,7 @@ const StudentDashboard = () => {
         </div>
       )}
 
-      {/* Stats Grid */}
+      {}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card, index) => (
           <Card key={index} className="hover:shadow-md transition-shadow">
@@ -208,7 +208,7 @@ const StudentDashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Personal Notifications */}
+        {}
         <Card className="lg:col-span-1 border-primary/20 bg-primary/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -233,7 +233,7 @@ const StudentDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Notice Board */}
+        {}
         <Card className="lg:col-span-2 relative overflow-hidden">
           <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
           <CardHeader>

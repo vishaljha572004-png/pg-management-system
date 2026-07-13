@@ -6,7 +6,7 @@ export const generateReceipt = (paymentDetails, pgName = "PG Management System")
   try {
     const doc = new jsPDF();
     
-    // Header
+    
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
     doc.text(pgName, 105, 20, { align: 'center' });
@@ -18,13 +18,13 @@ export const generateReceipt = (paymentDetails, pgName = "PG Management System")
     doc.setLineWidth(0.5);
     doc.line(14, 35, 196, 35);
     
-    // Receipt Info
+    
     doc.setFontSize(10);
     const receiptNo = paymentDetails.receipt_number || `REC-${paymentDetails.type.toUpperCase()}-${paymentDetails.id}-${new Date().getTime().toString().slice(-4)}`;
     doc.text(`Receipt No: ${receiptNo}`, 14, 45);
     doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 52);
     
-    // Payment Details box
+    
     doc.setFillColor(240, 240, 240);
     doc.rect(14, 60, 182, 45, 'F');
     
@@ -42,7 +42,7 @@ export const generateReceipt = (paymentDetails, pgName = "PG Management System")
     doc.text(`Transaction ID (UTR): ${paymentDetails.transaction_id || 'N/A'}`, 18, 96);
     doc.text(`Payment Status: PAID`, 100, 96);
     
-    // Amount Table
+    
     doc.autoTable({
       startY: 110,
       head: [['Description', 'Amount']],
@@ -55,7 +55,7 @@ export const generateReceipt = (paymentDetails, pgName = "PG Management System")
       footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' }
     });
     
-    // Footer
+    
     const finalY = doc.lastAutoTable.finalY + 30;
     
     doc.setFont('helvetica', 'bold');

@@ -1,4 +1,4 @@
-// Using global fetch
+
 
 async function runTests() {
   const baseURL = 'http://localhost:5000/api';

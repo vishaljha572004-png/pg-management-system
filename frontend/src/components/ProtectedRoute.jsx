@@ -15,7 +15,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
     const role = user.role?.toString().trim().toLowerCase();
     const normalizedAllowed = allowedRoles.map(r => r.toString().trim().toLowerCase());
     if (!normalizedAllowed.includes(role)) {
-      // Redirect based on role if unauthorized
+      
       if (role === 'admin') return <Navigate to="/admin-dashboard" replace />;
       if (role === 'super admin') return <Navigate to="/super-admin-dashboard" replace />;
       return <Navigate to="/dashboard" replace />;

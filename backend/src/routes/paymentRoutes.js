@@ -12,7 +12,7 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Multer config for file upload
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/'); 
@@ -25,14 +25,14 @@ const upload = multer({ storage: storage });
 
 router.use(verifyToken);
 
-// Student submits payment screenshot
+
 router.post('/submit', authorizeRoles('Student'), upload.single('screenshot'), submitPayment);
 
-// Admin verifies payment
+
 router.post('/verify', authorizeRoles('Admin'), verifyPayment);
 router.get('/pending', authorizeRoles('Admin'), getPendingVerifications);
 
-// Development mode payment simulation
+
 router.post('/simulate', authorizeRoles('Student'), simulatePayment);
 
 export default router;

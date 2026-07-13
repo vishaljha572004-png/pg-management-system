@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 
 const router = express.Router();
 
-// All routes here should be protected and only for students
+
 router.use(verifyToken);
 router.use(authorizeRoles('Student'));
 

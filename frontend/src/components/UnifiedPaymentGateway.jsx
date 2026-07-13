@@ -11,7 +11,7 @@ const MOCK_PAYMENT_OPTIONS = [
   { id: 'phonepe', name: 'PhonePe', icon: 'P', color: 'bg-purple-600', scheme: 'phonepe://pay' },
   { id: 'paytm', name: 'Paytm', icon: '₹', color: 'bg-sky-500', scheme: 'paytmmp://pay' },
   { id: 'bhim', name: 'BHIM UPI', icon: 'B', color: 'bg-orange-500', scheme: 'bhim://pay' },
-  { id: 'amazon', name: 'Amazon Pay', icon: 'A', color: 'bg-slate-800', scheme: 'upi://pay' }, // Fallback standard URI
+  { id: 'amazon', name: 'Amazon Pay', icon: 'A', color: 'bg-slate-800', scheme: 'upi://pay' }, 
 ];
 
 const PROCESSING_STEPS = [
@@ -23,20 +23,20 @@ const PROCESSING_STEPS = [
 ];
 
 const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, studentInfo }) => {
-  const [step, setStep] = useState('initial'); // initial, dev_processing, dev_success, manual_form, error
+  const [step, setStep] = useState('initial'); 
   const [isMobile, setIsMobile] = useState(false);
   const [processingMsgIndex, setProcessingMsgIndex] = useState(0);
   const [transactionData, setTransactionData] = useState(null);
   const [simulatedError, setSimulatedError] = useState(null);
   
-  // Manual Form States
+  
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    // Basic mobile detection
+    
     const checkMobile = () => {
       const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
       setIsMobile(isMobileDevice);
@@ -57,13 +57,13 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
   const handleAppLaunch = (opt) => {
     const url = generateUpiUrl(opt.scheme);
     
-    // Attempt to open URL
+    
     window.location.href = url;
 
-    // Set a timeout to detect if app failed to open (simple heuristic)
+    
     setTimeout(() => {
       if (document.hidden) {
-         // App likely opened
+         
       } else {
          toast.error(`The selected UPI application is not available on this device. Please choose another UPI app or scan the QR Code.`, { duration: 4000 });
       }
@@ -81,7 +81,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
   const startDevelopmentSimulation = async () => {
     setStep('dev_processing');
     
-    // Simulate processing steps
+    
     for (let i = 0; i < PROCESSING_STEPS.length - 1; i++) {
       setProcessingMsgIndex(i);
       await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
@@ -160,7 +160,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
     }, settings?.pg_name);
   };
 
-  // 1: Scan/Method, 2: Process/Submit, 3: Success
+  
   const currentTimelineStep = step === 'initial' ? 1 : (step === 'dev_processing' || step === 'manual_form') ? 2 : step === 'dev_success' ? 3 : 1;
 
   return (
@@ -178,7 +178,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
           </div>
         )}
 
-        {/* Header */}
+        {}
         <div className="px-6 pt-14 pb-5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 relative text-center">
            <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center mx-auto mb-3">
               <ShieldCheck className="text-indigo-500" size={24} />
@@ -193,7 +193,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
            )}
         </div>
 
-        {/* Timeline */}
+        {}
         <div className="px-8 pt-6 pb-2 hidden sm:block">
            <div className="flex items-center justify-between relative">
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full z-0"></div>
@@ -220,11 +220,11 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
         <div className="p-6 sm:p-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
           <AnimatePresence mode="wait">
             
-            {/* Step 1: Initial (QR + Mobile Apps) */}
+            {}
             {step === 'initial' && (
               <motion.div key="initial" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6 text-center">
                 
-                {/* Premium Payment Summary Card */}
+                {}
                 <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-3xl p-6 text-white shadow-xl shadow-indigo-900/20 relative overflow-hidden text-left">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
                   
@@ -253,7 +253,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
                   </div>
                 </div>
 
-                {/* Main QR Display */}
+                {}
                 <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 inline-block w-full max-w-[280px] mx-auto">
                    {settings?.qr_image_url ? (
                      <div className="aspect-square relative flex items-center justify-center bg-white rounded-xl">
@@ -314,7 +314,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
               </motion.div>
             )}
 
-            {/* Development Mode: Processing */}
+            {}
             {step === 'dev_processing' && (
               <motion.div key="processing" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} className="py-16 text-center space-y-8">
                  <div className="relative w-32 h-32 mx-auto">
@@ -353,7 +353,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
               </motion.div>
             )}
 
-            {/* Development Mode: Success */}
+            {}
             {step === 'dev_success' && (
               <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center pb-4">
                  <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6 relative">
@@ -411,7 +411,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
               </motion.div>
             )}
 
-            {/* QR+UTR Mode: Manual Verification Form */}
+            {}
             {step === 'manual_form' && (
               <motion.div key="manual" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <div className="mb-6 text-center">
@@ -420,7 +420,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
                 </div>
                 <form onSubmit={handleSubmit(onManualFormSubmit)} className="space-y-6">
                   
-                  {/* Modern Floating Label Inputs */}
+                  {}
                   <div className="relative">
                     <input 
                       type="text" 
@@ -500,7 +500,7 @@ const UnifiedPaymentGateway = ({ onClose, paymentDetails, settings, onSuccess, s
               </motion.div>
             )}
 
-            {/* Error state */}
+            {}
             {step === 'error' && (
               <motion.div key="error" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
                  <div className="w-24 h-24 bg-rose-100 dark:bg-rose-900/30 rounded-full flex items-center justify-center mx-auto mb-6">

@@ -10,7 +10,7 @@ export const addElectricityBill = async (req, res) => {
 
     const pg_id = req.user.pg_id;
 
-    // Check if bill already exists for this room and month
+    
     const [existing] = await pool.execute(
       'SELECT id FROM electricity_bills WHERE room_id = ? AND billing_month = ? AND pg_id = ?',
       [room_id, billing_month, pg_id]
@@ -25,7 +25,7 @@ export const addElectricityBill = async (req, res) => {
       [room_id, amount, billing_month, due_date, 'pending', pg_id]
     );
 
-    // Notify all students in this room
+    
     const [studentsInRoom] = await pool.execute('SELECT student_id FROM beds WHERE room_id = ? AND student_id IS NOT NULL', [room_id]);
     for (const student of studentsInRoom) {
       await pool.execute(
@@ -72,7 +72,7 @@ export const markElectricityBillPaid = async (req, res) => {
       return res.status(404).json({ message: 'Bill not found' });
     }
 
-    // Notify all students in this room
+    
     const [billData] = await pool.execute('SELECT room_id, billing_month FROM electricity_bills WHERE id = ?', [bill_id]);
     if (billData.length > 0) {
       const [studentsInRoom] = await pool.execute('SELECT student_id FROM beds WHERE room_id = ? AND student_id IS NOT NULL', [billData[0].room_id]);

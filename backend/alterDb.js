@@ -18,7 +18,7 @@ const alterDb = async () => {
 
     console.log(`Connected to database.`);
 
-    // 1. Create admin_settings table
+    
     await connection.query(`
       CREATE TABLE IF NOT EXISTS admin_settings (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,13 +29,13 @@ const alterDb = async () => {
       )
     `);
 
-    // Ensure there's a default row
+    
     const [settingsRows] = await connection.query(`SELECT COUNT(*) as count FROM admin_settings`);
     if (settingsRows[0].count === 0) {
       await connection.query(`INSERT INTO admin_settings (upi_id, account_name) VALUES ('', '')`);
     }
 
-    // 2. Alter rent_payments
+    
     try {
       await connection.query(`ALTER TABLE rent_payments MODIFY COLUMN status ENUM('pending', 'paid', 'overdue', 'pending_verification', 'rejected') DEFAULT 'pending'`);
       console.log('Modified rent_payments status enum');
@@ -54,7 +54,7 @@ const alterDb = async () => {
       }
     }
 
-    // 3. Alter electricity_bills
+    
     try {
       await connection.query(`ALTER TABLE electricity_bills MODIFY COLUMN status ENUM('pending', 'paid', 'overdue', 'pending_verification', 'rejected') DEFAULT 'pending'`);
       console.log('Modified electricity_bills status enum');

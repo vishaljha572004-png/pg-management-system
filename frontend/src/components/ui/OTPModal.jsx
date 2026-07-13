@@ -20,7 +20,7 @@ export const OTPModal = ({ isOpen, onClose, phone, purpose, onSuccess }) => {
     return () => clearInterval(timer);
   }, [isOpen, cooldown]);
 
-  // Reset state when modal opens
+  
   useEffect(() => {
     if (isOpen) {
       setOtp('');

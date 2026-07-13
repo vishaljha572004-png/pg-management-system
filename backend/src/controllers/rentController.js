@@ -1,8 +1,8 @@
 import pool from '../config/db.js';
 
-// Admin: Generate Rent for all occupied beds for a specific month
+
 export const generateMonthlyRent = async (req, res) => {
-  const { billing_month } = req.body; // e.g., 'July 2026'
+  const { billing_month } = req.body; 
   const pg_id = req.user.pg_id;
 
   if (!billing_month) {
@@ -13,7 +13,7 @@ export const generateMonthlyRent = async (req, res) => {
   try {
     await connection.beginTransaction();
 
-    // Find all occupied beds and their rent amounts
+    
     const [occupiedBeds] = await connection.execute(`
       SELECT b.student_id, r.rent_per_bed 
       FROM beds b
@@ -29,20 +29,20 @@ export const generateMonthlyRent = async (req, res) => {
     let generatedCount = 0;
 
     for (let bed of occupiedBeds) {
-      // Check if rent is already generated for this student for this month
+      
       const [existingRent] = await connection.execute(
         'SELECT id FROM rent_payments WHERE student_id = ? AND billing_month = ?',
         [bed.student_id, billing_month]
       );
 
       if (existingRent.length === 0) {
-        // Insert pending rent with pg_id
+        
         await connection.execute(
           'INSERT INTO rent_payments (student_id, amount, billing_month, status, pg_id) VALUES (?, ?, ?, ?, ?)',
           [bed.student_id, bed.rent_per_bed, billing_month, 'pending', pg_id]
         );
         
-        // Notify student
+        
         await connection.execute(
           'INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)',
           [bed.student_id, 'Rent Bill Generated', `Your rent bill for ${billing_month} has been generated. Amount: ₹${bed.rent_per_bed}`, 'billing']
@@ -63,7 +63,7 @@ export const generateMonthlyRent = async (req, res) => {
   }
 };
 
-// Admin: Get all rent records (Filterable)
+
 export const getAllRentRecords = async (req, res) => {
   try {
     const { month, status } = req.query;
@@ -99,7 +99,7 @@ export const getAllRentRecords = async (req, res) => {
   }
 };
 
-// Admin: Mark rent as paid
+
 export const markRentAsPaid = async (req, res) => {
   try {
     const { payment_id, transaction_id } = req.body;
@@ -120,7 +120,7 @@ export const markRentAsPaid = async (req, res) => {
       return res.status(404).json({ message: 'Rent record not found' });
     }
 
-    // Get student_id to notify
+    
     const [rentRecord] = await pool.execute('SELECT student_id, billing_month FROM rent_payments WHERE id = ?', [payment_id]);
     if (rentRecord.length > 0) {
       await pool.execute(
@@ -136,7 +136,7 @@ export const markRentAsPaid = async (req, res) => {
   }
 };
 
-// Student: Get my rent records
+
 export const getMyRentRecords = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -151,7 +151,7 @@ export const getMyRentRecords = async (req, res) => {
   }
 };
 
-// Student: Simulate Rent Payment
+
 export const studentPayRent = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -161,7 +161,7 @@ export const studentPayRent = async (req, res) => {
       return res.status(400).json({ message: 'Payment ID is required' });
     }
 
-    // Verify the payment belongs to the student and is pending
+    
     const [existing] = await pool.execute(
       'SELECT id, status FROM rent_payments WHERE id = ? AND student_id = ?',
       [payment_id, studentId]
@@ -175,7 +175,7 @@ export const studentPayRent = async (req, res) => {
       return res.status(400).json({ message: 'Rent is already paid' });
     }
 
-    // Generate a random mock transaction ID
+    
     const mockTransactionId = 'TXN' + Math.floor(Math.random() * 1000000000);
 
     const [result] = await pool.execute(

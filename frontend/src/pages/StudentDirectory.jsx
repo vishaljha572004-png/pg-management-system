@@ -37,7 +37,7 @@ const StudentDirectory = () => {
       toast.success('Student invited successfully. They can now login.');
       setShowInviteModal(false);
       setInviteData({ name: '', phone: '', email: '' });
-      // Refresh list
+      
       const response = await api.get('/admin/students');
       setStudents(response.data);
     } catch (error) {

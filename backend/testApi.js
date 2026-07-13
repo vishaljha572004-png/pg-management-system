@@ -2,7 +2,7 @@ const run = async () => {
   try {
     const baseURL = 'http://localhost:5000/api';
     
-    // Login as admin
+    
     let res = await fetch(`${baseURL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -11,7 +11,7 @@ const run = async () => {
     let data = await res.json();
     const token = data.token;
 
-    // Fetch all students
+    
     res = await fetch(`${baseURL}/admin/students`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });

@@ -8,7 +8,7 @@ const TenantVerificationDashboard = () => {
   const [pendingVerifications, setPendingVerifications] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Modal state
+  
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const fetchVerifications = async () => {
@@ -31,13 +31,13 @@ const TenantVerificationDashboard = () => {
       let remarks = '';
       if (action === 'reject') {
         remarks = prompt('Enter reason for rejection:');
-        if (!remarks) return; // Cancelled
+        if (!remarks) return; 
       }
 
-      // Re-using verify-identity endpoint which updates profile_status
+      
       await api.post('/admin/verify-identity', { studentId: selectedStudent.user_id, action, remarks });
       
-      // If police status was submitted, also update that
+      
       if (selectedStudent.police_status === 'submitted') {
          await api.post('/admin/verify-police', { studentId: selectedStudent.user_id, action, remarks });
       }
@@ -51,7 +51,7 @@ const TenantVerificationDashboard = () => {
     }
   };
 
-  // Filter to show all pending
+  
   const displayedStudents = pendingVerifications.filter(s => s.profile_status === 'submitted' || s.police_status === 'submitted');
 
   return (
@@ -103,7 +103,7 @@ const TenantVerificationDashboard = () => {
         </div>
       )}
 
-      {/* Verification Modal */}
+      {}
       <AnimatePresence>
         {selectedStudent && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
@@ -118,7 +118,7 @@ const TenantVerificationDashboard = () => {
               <div className="p-6 overflow-y-auto flex-1">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   
-                  {/* Student Details */}
+                  {}
                   <div className="space-y-6">
                     <h3 className="font-bold border-b pb-2">Guardian & Contact Information</h3>
                     <div className="grid grid-cols-2 gap-4 text-sm">
@@ -127,7 +127,7 @@ const TenantVerificationDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Documents Display */}
+                  {}
                   <div className="space-y-6">
                     <h3 className="font-bold border-b pb-2">Police Verification</h3>
                     

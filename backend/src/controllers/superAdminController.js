@@ -2,7 +2,7 @@ import { UserModel } from '../models/userModel.js';
 import pool from '../config/db.js';
 import bcrypt from 'bcrypt';
 
-// --- PG Management ---
+
 
 import { generateOrgCode } from '../utils/generateOrgCode.js';
 
@@ -11,7 +11,7 @@ export const createPG = async (req, res) => {
     const { name, owner_name, contact_number, email } = req.body;
     let org_code = generateOrgCode(name);
     
-    // Ensure org code uniqueness
+    
     let isUnique = false;
     while (!isUnique) {
       const [existing] = await pool.execute('SELECT id FROM pgs WHERE org_code = ?', [org_code]);
@@ -60,7 +60,7 @@ export const getHostelDetails = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Get basic PG details and stats
+    
     const [pgRows] = await pool.execute(`
       SELECT 
         p.*,
@@ -79,14 +79,14 @@ export const getHostelDetails = async (req, res) => {
 
     const pg = pgRows[0];
 
-    // Get Admins for this PG
+    
     const [admins] = await pool.execute(`
       SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at 
       FROM users u JOIN roles r ON u.role_id = r.id 
       WHERE u.pg_id = ? AND r.name = 'Admin'
     `, [id]);
 
-    // Get Students for this PG
+    
     const [students] = await pool.execute(`
       SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at, b.bed_number, r.room_number 
       FROM users u 
@@ -96,7 +96,7 @@ export const getHostelDetails = async (req, res) => {
       WHERE u.pg_id = ? AND ro.name = 'Student'
       ORDER BY u.created_at DESC
       LIMIT 50
-    `, [id]); // Limiting to 50 for quick summary view
+    `, [id]); 
 
     res.json({
       hostel: pg,
@@ -132,7 +132,7 @@ export const deletePG = async (req, res) => {
   }
 };
 
-// --- Admin Management ---
+
 
 export const createAdmin = async (req, res) => {
   try {
@@ -145,8 +145,8 @@ export const createAdmin = async (req, res) => {
     const existingUser = await UserModel.findByEmail(email, pg_id);
     const existingPhone = await UserModel.findByPhone(phone, pg_id);
     
-    // Globally, admins shouldn't share emails/phones even across PGs to avoid login confusion, but let's enforce it locally at least.
-    // Wait, the migration script created unique (phone, pg_id) so it will enforce uniqueness at DB level.
+    
+    
     if (existingUser || existingPhone) {
       return res.status(400).json({ message: 'User with this email or phone already exists in this PG' });
     }

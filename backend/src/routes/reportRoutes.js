@@ -4,7 +4,7 @@ import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// Only admin can access reports
+
 router.use(verifyToken);
 router.use(authorizeRoles('Admin'));
 

@@ -7,7 +7,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 
 const router = express.Router();
 
-// Strict protection, only 'Admin' role can access
+
 router.use(verifyToken);
 router.use(authorizeRoles('Admin'));
 
@@ -15,7 +15,7 @@ router.get('/dashboard', asyncHandler(getAdminDashboardSummary));
 router.get('/students', asyncHandler(getAllStudents));
 router.post('/invite-student', asyncHandler(inviteStudent));
 
-// Verification & Tenant Management
+
 router.get('/pending-verifications', asyncHandler(getPendingVerifications));
 router.post('/verify-identity', asyncHandler(verifyIdentity));
 router.post('/verify-police', asyncHandler(verifyPolice));
