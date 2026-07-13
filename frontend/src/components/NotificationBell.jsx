@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
@@ -7,6 +7,7 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const fetchNotifications = async () => {
     try {
@@ -23,6 +24,32 @@ const NotificationBell = () => {
     const interval = setInterval(fetchNotifications, 60000); // Check every minute
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
 
   const markAsRead = async (id) => {
     try {
@@ -45,7 +72,7 @@ const NotificationBell = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button onClick={() => setIsOpen(!isOpen)} className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
         <Bell className="w-6 h-6 text-slate-600 dark:text-slate-300" />
         {unreadCount > 0 && (

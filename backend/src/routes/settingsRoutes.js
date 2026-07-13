@@ -3,8 +3,14 @@ import multer from 'multer';
 import path from 'path';
 import { getSettings, updateSettings } from '../controllers/settingsController.js';
 import { verifyToken, authorizeRoles } from '../middlewares/authMiddleware.js';
+import fs from 'fs';
 
 const router = express.Router();
+
+const uploadDir = 'uploads/';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // Multer config for file upload
 const storage = multer.diskStorage({

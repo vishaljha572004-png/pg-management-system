@@ -12,10 +12,10 @@ export const getSettings = async (req, res) => {
        return res.json({ pg_name: '', upi_id: '', account_name: '', qr_image_url: null });
     }
 
-    const [rows] = await pool.execute('SELECT name as pg_name, upi_id, owner_name as account_name, qr_code as qr_image_url FROM pgs WHERE id = ?', [pg_id]);
+    const [rows] = await pool.execute('SELECT name as pg_name, upi_id, owner_name as account_name, qr_code as qr_image_url, payment_mode FROM pgs WHERE id = ?', [pg_id]);
     
     if (rows.length === 0) {
-      return res.json({ pg_name: '', upi_id: '', account_name: '', qr_image_url: null });
+      return res.json({ pg_name: '', upi_id: '', account_name: '', qr_image_url: null, payment_mode: 'development' });
     }
     res.json(rows[0]);
   } catch (error) {
@@ -61,8 +61,8 @@ export const updateSettings = async (req, res) => {
     const finalImageUrl = qr_image_url || existing[0].qr_code;
     
     await pool.execute(
-      'UPDATE pgs SET name = ?, upi_id = ?, owner_name = ?, qr_code = ? WHERE id = ?',
-      [pg_name || 'My PG', upi_id || '', account_name || '', finalImageUrl, pg_id]
+      'UPDATE pgs SET name = ?, upi_id = ?, owner_name = ?, qr_code = ?, payment_mode = ? WHERE id = ?',
+      [pg_name || 'My PG', upi_id || '', account_name || '', finalImageUrl, payment_mode || 'development', pg_id]
     );
 
     res.json({ message: 'Settings updated successfully', qr_image_url: finalImageUrl });

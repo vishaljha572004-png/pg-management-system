@@ -29,7 +29,7 @@ export const getMyComplaints = async (req, res) => {
   try {
     const student_id = req.user.id;
     const [complaints] = await pool.execute(
-      'SELECT * FROM complaints WHERE student_id = ? ORDER BY created_at DESC',
+      'SELECT id, student_id, title, description, status, resolution_remarks AS resolution_remark, created_at, pg_id FROM complaints WHERE student_id = ? ORDER BY created_at DESC',
       [student_id]
     );
     res.json(complaints);
@@ -44,7 +44,7 @@ export const getAllComplaints = async (req, res) => {
   try {
     const pg_id = req.user.pg_id;
     const [complaints] = await pool.execute(`
-      SELECT c.*, u.name as student_name, r.room_number, b.bed_number 
+      SELECT c.id, c.student_id, c.title, c.description, c.status, c.resolution_remarks AS resolution_remark, c.created_at, c.pg_id, u.name as student_name, r.room_number, b.bed_number 
       FROM complaints c
       JOIN users u ON c.student_id = u.id
       LEFT JOIN beds b ON b.student_id = u.id
@@ -70,7 +70,7 @@ export const updateComplaintStatus = async (req, res) => {
     }
 
     const [result] = await pool.execute(
-      'UPDATE complaints SET status = ?, resolution_remark = ? WHERE id = ? AND pg_id = ?',
+      'UPDATE complaints SET status = ?, resolution_remarks = ? WHERE id = ? AND pg_id = ?',
       [status, resolution_remark || null, complaint_id, pg_id]
     );
 

@@ -3,8 +3,14 @@ import { getMyProfile, updateProfile } from '../controllers/profileController.js
 import { verifyToken } from '../middlewares/authMiddleware.js';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
+
+const uploadDir = 'uploads/';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
