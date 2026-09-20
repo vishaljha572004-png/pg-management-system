@@ -172,6 +172,7 @@ const AdminRegister = () => {
             </div>
           </form>
         </motion.div>
+      </div>
     </div>
   );
 };
