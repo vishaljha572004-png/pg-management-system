@@ -51,36 +51,7 @@ const AdminLogin = () => {
       }
       window.location.href = '/admin-dashboard';
     } catch (error) {
-      const errData = error.response?.data;
-      if (errData?.requires_otp) {
-        setPendingData({ ...data, phone: errData.phone });
-        try {
-          await api.post('/auth/otp/send', { phone: errData.phone, purpose: 'login' });
-          setShowOTPModal(true);
-        } catch (otpErr) {
-          toast.error(otpErr.response?.data?.message || 'Failed to send OTP');
-        }
-      } else {
-        toast.error(errData?.message || 'Login failed');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onOTPVerified = async (otpToken) => {
-    setShowOTPModal(false);
-    setIsLoading(true);
-    try {
-      const response = await api.post('/auth/admin/login', { ...pendingData, otpToken });
-      toast.success(response.data.message);
-      login(response.data.user, response.data.accessToken);
-      if (rememberMe) {
-        localStorage.setItem('adminLoginDetails', JSON.stringify(pendingData));
-      }
-      window.location.href = '/admin-dashboard';
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed after OTP');
+      toast.error(error.response?.data?.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -209,17 +180,6 @@ const AdminLogin = () => {
             </div>
           </form>
         </motion.div>
-      </div>
-
-      {showOTPModal && pendingData && (
-        <OTPModal
-          isOpen={showOTPModal}
-          onClose={() => setShowOTPModal(false)}
-          phone={pendingData.phone}
-          purpose="login"
-          onSuccess={onOTPVerified}
-        />
-      )}
     </div>
   );
 };

@@ -34,29 +34,13 @@ const StudentRegister = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      
-      await api.post('/auth/otp/send', { phone: data.phone, purpose: 'student_signup' });
-      setPendingData(data);
-      setShowOTPModal(true);
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to send OTP');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onOTPVerified = async (otpToken) => {
-    setShowOTPModal(false);
-    setIsLoading(true);
-    try {
-      const response = await api.post('/auth/register', { ...pendingData, otpToken });
+      const response = await api.post('/auth/register', data);
       toast.success(response.data.message);
       
-      
       const loginResponse = await api.post('/auth/login', {
-        org_code: pendingData.org_code,
-        email: pendingData.phone,
-        password: pendingData.password
+        org_code: data.org_code,
+        email: data.phone,
+        password: data.password
       });
       
       login(loginResponse.data.user, loginResponse.data.accessToken);
@@ -197,16 +181,6 @@ const StudentRegister = () => {
           </form>
         </motion.div>
       </div>
-      
-      {showOTPModal && pendingData && (
-        <OTPModal
-          isOpen={showOTPModal}
-          onClose={() => setShowOTPModal(false)}
-          phone={pendingData.phone}
-          purpose="student_signup"
-          onSuccess={onOTPVerified}
-        />
-      )}
     </div>
   );
 };

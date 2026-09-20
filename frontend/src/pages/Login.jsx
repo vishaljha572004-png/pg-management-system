@@ -100,21 +100,11 @@ const Login = () => {
       navigate('/dashboard');
     } catch (error) {
       const errData = error.response?.data;
-      if (errData?.requires_otp) {
-        setPendingData({ ...data, phone: errData.phone, role: 'student' });
-        try {
-          await api.post('/auth/otp/send', { phone: errData.phone, purpose: 'login' });
-          setShowOTPModal(true);
-        } catch (otpErr) {
-          toast.error(otpErr.response?.data?.message || 'Failed to send OTP');
-        }
-      } else {
-        const errMsg = errData?.details ? `${errData.message}: ${errData.details}` : (errData?.message || 'Login failed');
-        toast.error(errMsg);
-        
-        localStorage.removeItem('studentLoginDetails');
-        setRememberMe(false);
-      }
+      const errMsg = errData?.details ? `${errData.message}: ${errData.details}` : (errData?.message || 'Login failed');
+      toast.error(errMsg);
+      
+      localStorage.removeItem('studentLoginDetails');
+      setRememberMe(false);
     } finally {
       setIsLoading(false);
     }
@@ -134,43 +124,10 @@ const Login = () => {
       navigate('/admin-dashboard');
     } catch (error) {
       const errData = error.response?.data;
-      if (errData?.requires_otp) {
-        setPendingData({ ...data, phone: errData.phone, role: 'admin' });
-        try {
-          await api.post('/auth/otp/send', { phone: errData.phone, purpose: 'login' });
-          setShowOTPModal(true);
-        } catch (otpErr) {
-          toast.error(otpErr.response?.data?.message || 'Failed to send OTP');
-        }
-      } else {
-        toast.error(errData?.message || 'Login failed');
-        
-        localStorage.removeItem('adminLoginDetails');
-        setRememberMe(false);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onOTPVerified = async (otpToken) => {
-    setShowOTPModal(false);
-    setIsLoading(true);
-    try {
-      const endpoint = pendingData.role === 'admin' ? '/auth/admin/login' : '/auth/login';
-      const response = await api.post(endpoint, { ...pendingData, otpToken });
-      toast.success(response.data.message);
-      login(response.data.user, response.data.accessToken);
+      toast.error(errData?.message || 'Login failed');
       
-      if (pendingData.role === 'admin') {
-        if (rememberMe) localStorage.setItem('adminLoginDetails', JSON.stringify(pendingData));
-        navigate('/admin-dashboard');
-      } else {
-        if (rememberMe) localStorage.setItem('studentLoginDetails', JSON.stringify(pendingData));
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed after OTP');
+      localStorage.removeItem('adminLoginDetails');
+      setRememberMe(false);
     } finally {
       setIsLoading(false);
     }
@@ -408,15 +365,7 @@ const Login = () => {
         </div>
       )}
 
-      {showOTPModal && pendingData && (
-        <OTPModal
-          isOpen={showOTPModal}
-          onClose={() => setShowOTPModal(false)}
-          phone={pendingData.phone}
-          purpose="login"
-          onSuccess={onOTPVerified}
-        />
-      )}
+
     </div>
   );
 };

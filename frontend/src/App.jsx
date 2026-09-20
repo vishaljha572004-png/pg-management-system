@@ -27,60 +27,63 @@ import StudentRegister from './pages/StudentRegister';
 import AdminRegister from './pages/AdminRegister';
 import SuperAdminLogin from './pages/SuperAdminLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const App = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-          <Routes>
-            {}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<StudentRegister />} />
-            <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/register" element={<AdminRegister />} />
-            <Route path="/super-admin/login" element={<SuperAdminLogin />} />
-            <Route path="/" element={<Navigate to="/login" replace />} />
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+            <Routes>
+              {}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<StudentRegister />} />
+              <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin/register" element={<AdminRegister />} />
+              <Route path="/super-admin/login" element={<SuperAdminLogin />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
 
-            {}
-            <Route element={<ProtectedRoute allowedRoles={['Student']} />}>
-              <Route element={<StudentLayout />}>
-                <Route path="/verify-profile" element={<ProfileVerification />} />
-                <Route path="/dashboard" element={<StudentDashboard />} />
-                <Route path="/student/complaints" element={<StudentComplaints />} />
-                <Route path="/student/payments" element={<StudentPayments />} />
-                <Route path="/student/profile" element={<StudentProfile />} />
+              {}
+              <Route element={<ProtectedRoute allowedRoles={['Student']} />}>
+                <Route element={<StudentLayout />}>
+                  <Route path="/verify-profile" element={<ProfileVerification />} />
+                  <Route path="/dashboard" element={<StudentDashboard />} />
+                  <Route path="/student/complaints" element={<StudentComplaints />} />
+                  <Route path="/student/payments" element={<StudentPayments />} />
+                  <Route path="/student/profile" element={<StudentProfile />} />
+                </Route>
               </Route>
-            </Route>
 
-            {}
-            <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
-              <Route element={<AdminLayout />}>
-                <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/rooms" element={<RoomManagement />} />
-                <Route path="/admin/rent" element={<RentCollection />} />
-                <Route path="/admin/electricity" element={<ElectricityBilling />} />
-                <Route path="/admin/complaints" element={<ComplaintManagement />} />
-                <Route path="/admin/reports" element={<ReportsAnalytics />} />
-                <Route path="/admin/directory" element={<StudentDirectory />} />
-                <Route path="/admin/payment-settings" element={<PaymentSettings />} />
-                <Route path="/admin/payment-verification" element={<PaymentVerification />} />
-                <Route path="/admin/tenant-verification" element={<TenantVerificationDashboard />} />
-                <Route path="/admin/notice-board" element={<AdminNoticeBoard />} />
+              {}
+              <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+                <Route element={<AdminLayout />}>
+                  <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/rooms" element={<RoomManagement />} />
+                  <Route path="/admin/rent" element={<RentCollection />} />
+                  <Route path="/admin/electricity" element={<ElectricityBilling />} />
+                  <Route path="/admin/complaints" element={<ComplaintManagement />} />
+                  <Route path="/admin/reports" element={<ReportsAnalytics />} />
+                  <Route path="/admin/directory" element={<StudentDirectory />} />
+                  <Route path="/admin/payment-settings" element={<PaymentSettings />} />
+                  <Route path="/admin/payment-verification" element={<PaymentVerification />} />
+                  <Route path="/admin/tenant-verification" element={<TenantVerificationDashboard />} />
+                  <Route path="/admin/notice-board" element={<AdminNoticeBoard />} />
+                </Route>
               </Route>
-            </Route>
 
-            {}
-            <Route element={<ProtectedRoute allowedRoles={['Super Admin']} />}>
-              <Route path="/super-admin-dashboard" element={<SuperAdminDashboard />} />
-            </Route>
-            
-            <Route path="*" element={<div>404 Not Found</div>} />
-          </Routes>
-          <Toaster position="top-right" />
-        </div>
-      </AuthProvider>
-    </Router>
+              {}
+              <Route element={<ProtectedRoute allowedRoles={['Super Admin']} />}>
+                <Route path="/super-admin-dashboard" element={<SuperAdminDashboard />} />
+              </Route>
+              
+              <Route path="*" element={<div>404 Not Found</div>} />
+            </Routes>
+            <Toaster position="top-right" />
+          </div>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

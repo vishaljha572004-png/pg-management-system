@@ -34,22 +34,7 @@ const AdminRegister = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      
-      await api.post('/auth/otp/send', { phone: data.phone, purpose: 'admin_signup' });
-      setPendingData(data);
-      setShowOTPModal(true);
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to send OTP');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onOTPVerified = async (otpToken) => {
-    setShowOTPModal(false);
-    setIsLoading(true);
-    try {
-      const response = await api.post('/auth/register-pg', { ...pendingData, otpToken });
+      const response = await api.post('/auth/register-pg', data);
       toast.success(response.data.message);
       login(response.data.user, response.data.accessToken);
       navigate('/admin-dashboard');
@@ -187,17 +172,6 @@ const AdminRegister = () => {
             </div>
           </form>
         </motion.div>
-      </div>
-      
-      {showOTPModal && pendingData && (
-        <OTPModal
-          isOpen={showOTPModal}
-          onClose={() => setShowOTPModal(false)}
-          phone={pendingData.phone}
-          purpose="admin_signup"
-          onSuccess={onOTPVerified}
-        />
-      )}
     </div>
   );
 };

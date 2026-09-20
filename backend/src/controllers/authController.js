@@ -9,18 +9,7 @@ export const registerPG = async (req, res) => {
   try {
     const { pg_name, owner_name, email, phone, password, otpToken } = req.body;
 
-    if (!otpToken) {
-      return res.status(400).json({ message: 'OTP verification is required for registration.' });
-    }
 
-    try {
-      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'temp_dev_secret_only');
-      if (decoded.phone !== phone || decoded.purpose !== 'admin_signup' || !decoded.verified) {
-        return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
-      }
-    } catch (err) {
-      return res.status(400).json({ message: 'OTP token is expired or invalid. Please verify mobile again.' });
-    }
 
     
     const existingUser = await UserModel.findByEmail(email);
@@ -95,18 +84,7 @@ export const register = async (req, res) => {
   try {
     const { name, email, phone, password, org_code, otpToken } = req.body;
 
-    if (!otpToken) {
-      return res.status(400).json({ message: 'OTP verification is required for registration.' });
-    }
 
-    try {
-      const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'temp_dev_secret_only');
-      if (decoded.phone !== phone || decoded.purpose !== 'student_signup' || !decoded.verified) {
-        return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
-      }
-    } catch (err) {
-      return res.status(400).json({ message: 'OTP token is expired or invalid. Please verify mobile again.' });
-    }
 
     
     const existingUser = await UserModel.findByEmail(email);
@@ -189,32 +167,7 @@ const handleLogin = async (req, res, allowedRoles) => {
     }
 
     
-    const isSuperAdmin = user.role && user.role.toLowerCase() === 'super admin';
-    if (!user.is_phone_verified && !isSuperAdmin) {
-      if (!otpToken) {
-        
-        return res.status(403).json({ 
-          requires_otp: true, 
-          phone: user.phone, 
-          purpose: 'login',
-          message: 'Mobile number verification required.' 
-        });
-      }
 
-      
-      try {
-        const decoded = jwt.verify(otpToken, process.env.JWT_SECRET || 'temp_dev_secret_only');
-        if (decoded.phone !== user.phone || decoded.purpose !== 'login' || !decoded.verified) {
-          return res.status(400).json({ message: 'Invalid or mismatched OTP token.' });
-        }
-        
-        
-        await UserModel.markPhoneVerified(user.id);
-        user.is_phone_verified = true;
-      } catch (err) {
-        return res.status(400).json({ message: 'OTP token is expired or invalid.' });
-      }
-    }
 
     
     if (!user.role || !allowedRoles.includes(user.role)) {
