@@ -31,8 +31,14 @@ export const verifyToken = (req, res, next) => {
 export const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
     console.log('authorizeRoles debug:', { user: req.user, role: req.user?.role, allowed: allowedRoles });
-    if (!req.user || !req.user.role || !allowedRoles.includes(req.user.role)) {
-      console.log('authorizeRoles FAIL!');
+    if (!req.user || !req.user.role) {
+      console.log('authorizeRoles FAIL! No user or role');
+      return res.status(403).json({ message: 'Forbidden, insufficient permissions' });
+    }
+    const userRole = req.user.role.toString().trim().toLowerCase();
+    const normalizedAllowed = allowedRoles.map(r => r.toString().trim().toLowerCase());
+    if (!normalizedAllowed.includes(userRole)) {
+      console.log('authorizeRoles FAIL! Role mismatch');
       return res.status(403).json({ message: 'Forbidden, insufficient permissions' });
     }
     next();
